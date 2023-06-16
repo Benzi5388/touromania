@@ -3,17 +3,16 @@ import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDB
 import { Link, useNavigate } from 'react-router-dom'; 
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
-import { googleSignIn, login } from '../Redux/Features/authSlice';
-import {GoogleLogin} from 'react-google-login'
+import { forgotPassword } from '../Redux/api';
 
 const initialState = {
     email : "",
     password : ""
 }
-function Login() {
+function ForgotPassword() {
     const [formValue, setFormValue] = useState(initialState)
     const {loading, error} = useSelector((state) =>({...state.auth}))
-    const {email, password} = formValue;
+    const {email} = formValue;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -23,8 +22,8 @@ function Login() {
 
     const handleSubmit = (e) =>{
        e.preventDefault()
-       if(email && password){
-        dispatch(login({formValue, navigate, toast}))
+       if(email){
+        dispatch(forgotPassword({formValue, navigate, toast}))
        }
     }
     const onInputChange = (e)=>{
@@ -32,17 +31,6 @@ function Login() {
        setFormValue({...formValue, [name] : value}) 
     }
 
-    const googleSuccess = (res) =>{
-       const email = res?.profileObj?.email;
-       const name = res?.profileObj?.name;
-       const token = res?.tokenId;
-       const googleId = res?.googleId;
-       const result = {email, name, token, googleId}
-       dispatch(googleSignIn({result, navigate, toast}))
-    };
-    const googleFailure = (err) =>{
-        toast.error(err)
-    };
   return (
     <div style={{
         margin : "auto", 
@@ -53,10 +41,10 @@ function Login() {
         >
         <MDBCard alignment='center'>
             <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
-            <h5>Sign In</h5>
+            <h5>Please enter your email</h5>
             <MDBCardBody>
                 <MDBValidation onSubmit={handleSubmit} noValidate className='row g-3'>
-                   <div className="col-md-12">
+                <div className="col-md-12">
                     <MDBInput label ='email'
                      type = 'email' 
                      value={email} 
@@ -64,18 +52,7 @@ function Login() {
                      onChange={onInputChange} 
                      required 
                      invalid 
-                     validation="Please provide your email"
-                     />
-                   </div>
-                   <div className="col-md-12">
-                    <MDBInput label ='password'
-                     type = 'password' 
-                     value={password} 
-                     name='password'
-                     onChange={onInputChange} 
-                     required 
-                     invalid 
-                     validation="Please provide your password"/>
+                     validation="enter your email"/>
                    </div>
                    <div className="col-12">
                     <MDBBtn style={{
@@ -88,33 +65,13 @@ function Login() {
                                 className = 'me-2'
                                 />
                             )}
-                            Login
+                            Submit
                     </MDBBtn>
                    </div>
-                </MDBValidation>
-                <br/>
-                <GoogleLogin
-                 clientId='993933691849-jd94dp1eg3fv45gj3nvi8u8a6mq2ms96.apps.googleusercontent.com'
-                 render={(renderProps) => (
-                    <MDBBtn style = {{width:'100%'}} 
-                    color = "danger" 
-                    onClick = {renderProps.onClick}
-                    disabled = {renderProps.disabled}
-                    >
-                      <MDBIcon className='me-2' fab icon= "google"/>Google Sign In
-                    </MDBBtn>
-                 )}
-                 onSuccess={googleSuccess}
-                 onFailure={googleFailure}
-                 cookiePolicy='single_host_origin'
-                />
+                </MDBValidation> 
             </MDBCardBody>
             <MDBCardFooter>
-                <Link to="/register">
-                <p>Don't have an account? Sign up</p>
-                </Link>
-                <Link to="/forgotPassword">
-                <p>Forgot password?</p>
+                <Link to="/login">
                 </Link>
             </MDBCardFooter>
         </MDBCard>
@@ -122,4 +79,4 @@ function Login() {
   )
 }
 
-export default Login
+export default ForgotPassword;
