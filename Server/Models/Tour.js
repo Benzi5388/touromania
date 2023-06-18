@@ -1,22 +1,28 @@
 import mongoose from "mongoose";
 
 const tourSchema = mongoose.Schema({
-    title:String,
-    description:String,
-    name:String,
-    creator:String,
-    tags:[String],
-    imageFile:String,
-    videoUrl: String,
-    createdAt : {
-        type:Date,
-        default: new Date()
+    title: {
+        type: String,
+        required: true
     },
-    likeCount : {
-        type:Number,
-        default : 0
+    description: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String
+    },
+    creator: String,
+    tags: [String],
+    image: {
+        type: String
+    },
+    videoUrl: String,
+    likeCount: {
+        type: Number,
+        default: 0
     }
-})
+}, { timestamps: true })
 
 const TourModel = mongoose.model('Tour', tourSchema);
 
