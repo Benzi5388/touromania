@@ -106,7 +106,6 @@ const authSlice = createSlice({
             state.loading = false
             state.error = action.payload && action.payload.message ? action.payload.message : 'Invalid Credentials!!';
         },
-
         [register.pending]: (state, action)=>{
             state.loading = true
         },
@@ -158,7 +157,6 @@ const authSlice = createSlice({
             state.loading = false
             state.error = action.payload && action.payload.message ? action.payload.message : 'Invalid Credentials!!';
         },
-
         [googleSignIn.pending]: (state, action)=>{
             state.loading = true
         },
