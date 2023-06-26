@@ -1,26 +1,30 @@
 import React, {useEffect, useState} from 'react';
-import {MDBCardBody, MDBCard, MDBFooter, MDBValidation, MDBBtn, MDBSpinner} from 'mdb-react-ui-kit';
+import {MDBCardBody, MDBCard, MDBValidation, MDBBtn} from 'mdb-react-ui-kit';
 import ChipInput from 'material-ui-chip-input';
 import {toast} from 'react-toastify';
-import FileBase from 'react-file-base64';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux'
-import { createTour } from '../Redux/api';
+import { setTours } from '../Redux/Features/tourSlice';
+import { saveUserData } from '../Redux/Features/authSlice';
 import axios from 'axios';
-
-
-
+import Header from '../Components/Header';
 
 const AddEditTour = () => {
  const [title, setTitle] = useState('');
  const [file, setImage] = useState('');
  const [description, setDescription] = useState('');
+ const [videoUrl, setVideoUrl] = useState('');
  const [tags, setTag] = useState([]);
- const {error, loading} = useSelector((state) => ({...state.tour}))
- const {user} = useSelector((state) => ({...state.auth}))
+const { error, loading } = useSelector((state) => state.tour);
+const user = useSelector((state) => (state.auth.user))
  const dispatch = useDispatch();
- const navigate = useNavigate()
+ const navigate = useNavigate();
 
+ useEffect(() => {
+  if (user) {
+    navigate('/addTour'); // Navigate to the home route
+  }
+}, [user, navigate]);
 
  useEffect(()=>{
   error && toast.error(error)
@@ -29,30 +33,39 @@ const AddEditTour = () => {
  const handleSubmit =(e)=>{
    e.preventDefault();
    if(title && description){
-     const updatedTourData = {title,description,file}
-     console.log(file,updatedTourData);
-     axios.post("http://localhost:5000/tour",{title,description,file},{
+     const updatedTourData = {title,description,file, tags, videoUrl, name: user?.name, creator : user?.id}
+     console.log(user, "user");
+     axios.post("http://localhost:5000/tour", updatedTourData,{
       headers: {
           'content-type': 'multipart/form-data'
       }
   }).then((response)=>{
 console.log(response.data);
+dispatch(setTours(response.data))
 toast.success(response.data.message)
 navigate('/');
      }).catch(error)
     //  handleClear()
    }
  }
+
  const handleAddTag =(tag)=>{
-  setTag(tag)
+  setTag([...tags, tag]);
  }
+
  const handleDeleteTag =(deleteTag)=>{
-  setTag(tags.filter((tag)=> tag!==deleteTag))
+  setTag(tags.filter((tag) => tag !== deleteTag));
  }
- const handleClear =()=>{
-  // setTourData({title :'',  description:'', tags:[],image:''})
- }
+
+ const handleClear = () => {
+  setTitle('');
+  setDescription('');
+  setTag([]);
+  setVideoUrl('');
+};
   return (
+    <>
+    <Header/>
     <div style={{
       margin : "auto", 
       padding : '15px',
@@ -96,11 +109,20 @@ navigate('/');
                  placeholder='Enter a tag'
                  fullWidth
                  value={tags}
-              
-                //  onAdd={(tag)=>handleAddTag(tag)}
-                //  onDelete={(tag)=>handleDeleteTag(tag)}
+                 onAdd={(tag)=>handleAddTag(tag)}
+                 onDelete={(tag)=>handleDeleteTag(tag)}
                 />
               </div>
+              <div className="col-md-12">
+              <input
+                placeholder="Enter video URL"
+                type="text"
+                value={videoUrl}
+                name="videoUrl"
+                onChange={(e) => setVideoUrl(e.target.value)}
+                className="form-control"
+              />
+            </div>
               <div className="d-flex justify-content-start">
               <input type="file" onChange={(e)=>setImage(e.target.files[0])} className='mt-4 mb-2' accept='image/*' />
               </div>
@@ -112,6 +134,7 @@ navigate('/');
              </MDBCardBody>
            </MDBCard>
       </div>
+      </>
   )
 }
 

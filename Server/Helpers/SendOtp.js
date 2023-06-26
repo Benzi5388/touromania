@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 
  export function sentOTP(email, otp){
-  console.log(email, otp);
+  console.log(email, otp, "helpers");
     return new Promise((resolve, reject)=>{
         let transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
@@ -27,11 +27,8 @@ import nodemailer from 'nodemailer';
             transporter.sendMail(mailOptions, function (error, info) {
               if (error) {
                 reject(error)
-                console.log("hhhhhhhh");
-
               } else {
                 resolve({success:true, message:"Email sent successfull"})
-                console.log("gggggggggg");
               }
             });
     })

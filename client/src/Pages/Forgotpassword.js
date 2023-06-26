@@ -4,6 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { forgotPassword } from '../Redux/api';
+import axios from 'axios'
+import Cookies from 'js-cookie';
+import Header from '../Components/Header';
+
 
 const initialState = {
     email : "",
@@ -20,18 +24,30 @@ function ForgotPassword() {
        error && toast.error(error)
     }, [error]);
 
-    const handleSubmit = (e) =>{
-       e.preventDefault()
-       if(email){
-        dispatch(forgotPassword({formValue, navigate, toast}))
-       }
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (email) {
+          try {
+            const response = await axios.post('http://localhost:5000/users/forgotPassword', { email :email});
+            console.log(response.data); // Log the response from the server
+            Cookies.set('email', email, { expires: 1 });
+            navigate('/verifyOTP')
+            toast.success("Otp sent successfully")
+          } catch (error) {
+            console.error(error);
+            toast.error(error.response.data.message);
+          }
+        }
+      };
+
     const onInputChange = (e)=>{
        let {name, value} = e.target
        setFormValue({...formValue, [name] : value}) 
     }
 
   return (
+    <>
+    <Header/>
     <div style={{
         margin : "auto", 
         padding : '15px',
@@ -76,6 +92,7 @@ function ForgotPassword() {
             </MDBCardFooter>
         </MDBCard>
     </div>
+    </>
   )
 }
 

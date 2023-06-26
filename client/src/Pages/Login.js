@@ -3,8 +3,12 @@ import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDB
 import { Link, useNavigate } from 'react-router-dom'; 
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
-import { googleSignIn, login } from '../Redux/Features/authSlice';
+import { googleSignIn, saveUserData } from '../Redux/Features/authSlice';
 import {GoogleLogin} from 'react-google-login'
+import axios from 'axios';
+import Header from '../Components/Header';
+
+
 
 const initialState = {
     email : "",
@@ -12,38 +16,55 @@ const initialState = {
 }
 function Login() {
     const [formValue, setFormValue] = useState(initialState)
-    const {loading, error} = useSelector((state) =>({...state.auth}))
+    const [loading, setLoading] = useState(false); 
+    // const {loading, error} = useSelector((state) =>({...state.auth}))
+    const user = useSelector((state) => state.auth.user);
+    console.log(user, "userdata");
     const {email, password} = formValue;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    useEffect(()=>{
-       error && toast.error(error)
-    }, [error]);
+    // useEffect(()=>{
+    //    error && toast.error(error)
+    // }, [error]);
 
-    const handleSubmit = (e) =>{
-       e.preventDefault()
-       if(email && password){
-        dispatch(login({formValue, navigate, toast}))
-       }
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (email && password) {
+          const response = await axios.post('http://localhost:5000/users/signin', { formValue }).catch((err) => console.log(err));
+          if (response.data.token) {
+            const { token, userData } = response.data;
+            localStorage.setItem('token', token);
+            localStorage.setItem('userData', JSON.stringify(userData));
+            dispatch(saveUserData(userData));
+            navigate('/');
+            toast.success("Logged in Successfully")
+          } else {
+            toast.error(response.data.message);
+          }
+        }
+      };
+      
+
     const onInputChange = (e)=>{
        let {name, value} = e.target
        setFormValue({...formValue, [name] : value}) 
     }
 
     const googleSuccess = (res) =>{
-       const email = res?.profileObj?.email;
-       const name = res?.profileObj?.name;
-       const token = res?.tokenId;
-       const googleId = res?.googleId;
-       const result = {email, name, token, googleId}
-       dispatch(googleSignIn({result, navigate, toast}))
+    //    const email = res?.profileObj?.email;
+    //    const name = res?.profileObj?.name;
+    //    const token = res?.tokenId;
+    //    const googleId = res?.googleId;
+    //    const result = {email, name, token, googleId}
+    //    dispatch(googleSignIn({result, navigate, toast}))
     };
     const googleFailure = (err) =>{
-        toast.error(err)
+        // toast.error(err)
     };
   return (
+    <>
+    <Header/>
     <div style={{
         margin : "auto", 
         padding : '15px',
@@ -80,7 +101,7 @@ function Login() {
                    <div className="col-12">
                     <MDBBtn style={{
                         width : "100%"}} className='mt-2'>
-                            {loading && (
+                            {loading &&(
                                 <MDBSpinner
                                 size= 'sm'
                                 role = 'status'
@@ -119,6 +140,7 @@ function Login() {
             </MDBCardFooter>
         </MDBCard>
     </div>
+    </>
   )
 }
 

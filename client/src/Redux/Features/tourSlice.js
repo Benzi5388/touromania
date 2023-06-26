@@ -1,42 +1,39 @@
-import {createSlice, createAsyncThunk, isRejectedWithValue} from "@reduxjs/toolkit";
-import * as api from '../api';
+import { createSlice } from '@reduxjs/toolkit';
 
-export const createTour = createAsyncThunk(
-    'tour/createTour',
- async({updatedTourData, navigate, toast,image})=>{
-    try {
-      const response = await api.createTour(updatedTourData,image);
-      toast.success('Tour added Successfully!!');
-      navigate('/');
-      return response.data
-    } catch (err){
-        console.log(err + 'this is the error');
-        return isRejectedWithValue(err.response.data)
-    }
-});
+// Retrieve the stored tour data from localStorage
+const storedTours = localStorage.getItem('tours');
+const initialState = {
+  tours: storedTours ? JSON.parse(storedTours) : [],
+  loading: false,
+  error: null,
+};
 
 const tourSlice = createSlice({
-    name : "tour",
-    initialState : {
-        tour : {},
-        tours : [],
-        userTours:[],
-        error : "",
-        loading : false,
-    },
-    extraReducers : {
-        [createTour.pending]: (state, action)=>{
-            state.loading = true
-        },
-        [createTour.fulfilled]:(state, action) =>{
-            state.loading = false
-            state.tours = [action.payload]
-        },
-        [createTour.rejected] : (state, action) =>{
-            state.loading = false
-            state.error = action.payload && action.payload.message ? action.payload.message : 'Invalid Credentials!!';
-        }
-    }
-})
+  name: 'tour',
+  initialState,
+  reducers: {
+    setTours: (state, action) => {
+      state.tours = action.payload;
+      state.loading = false;
+      state.error = null;
 
-export default tourSlice.reducer
+      // Store the updated tour data in localStorage
+      localStorage.setItem('tours', JSON.stringify(action.payload));
+    },
+    getTour: (state) => {
+      state.loading = true;
+      state.error = null;
+    },updateTour: (state, action) => {
+      const { tourId, updatedTourData } = action.payload;
+      const existingTour = state.tours.find((tour) => tour._id === tourId);
+      if (existingTour) {
+        Object.assign(existingTour, updatedTourData);
+      }
+    },
+    // Other reducers...
+  },
+});
+
+export const { setTours, getTour, updateTour } = tourSlice.actions;
+
+export default tourSlice.reducer;

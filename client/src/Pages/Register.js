@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { register } from '../Redux/Features/authSlice';
+import axios from 'axios';
+import Header from '../Components/Header';
 
 const initialState = {
     firstName : "",
@@ -24,20 +26,30 @@ function Register() {
        error && toast.error(error)
     }, [error]);
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = async (e) =>{
        e.preventDefault()
        if(password !==confirmPassword){
         return toast.error("Passwords dont match")
        }
        if(email && password && firstName && lastName && password && lastName){
-        dispatch(register({formValue, navigate, toast}))
+        dispatch(register(formValue));
+        const response=await axios.post('http://localhost:5000/users/signup',{formValue}).catch((err)=>console.log(err))
+        if (response) {
+          console.log(response.data);
+          navigate('/otp')
+          toast.success("Otp sent successfully")
+        }
        }
     }
+
+
     const onInputChange = (e)=>{
        let {name, value} = e.target
        setFormValue({...formValue, [name] : value}) 
     }
   return (
+    <>
+    <Header/>
     <div style={{
         margin : "auto", 
         padding : '15px',
@@ -126,6 +138,7 @@ function Register() {
             </MDBCardFooter>
         </MDBCard>
     </div>
+    </>
   )
 }
 

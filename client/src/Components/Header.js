@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDBSpinner, MDBBtn, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav} from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
-import { setLogout } from '../Redux/Features/authSlice';
+import { setLogout, saveUserData } from '../Redux/Features/authSlice';
+import Cookies from 'js-cookie';
+import axios from 'axios'
 
 
 function Header() {
@@ -11,7 +13,17 @@ function Header() {
     const handleLogout = () =>{
       dispatch(setLogout())
     }
-    const {user} = useSelector((state) => ({...state.auth}))
+    useEffect(() => {
+      // Fetch user data from the Redux store directly
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        dispatch(saveUserData(JSON.parse(userData)));
+      }
+    }, [dispatch]);
+    
+    
+    const user = useSelector((state) => (state.auth.user))
+    console.log(user, "fsthgfd");
   return (
     <MDBNavbar fixed="top" expand ="lg" style = {{backgroundColor : '#f0e6ea'}}>
       <MDBContainer>
@@ -28,15 +40,15 @@ function Header() {
         </MDBNavbarToggler>
         <MDBCollapse show={show} navbar>
            <MDBNavbarNav right fullwidth={false} className='mb-2 mb-lg-0 justify-content-end'>
-            {user?.result?._id && (
-              <h5 style ={{marginRight:'30px', marginTop:'17px'}}>Logged in as : {user?.result?.name} </h5>
+            {user?.id && (
+              <h5 style ={{marginRight:'30px', marginTop:'17px'}}>Welcome : {user?.name} </h5>
             )}
              <MDBNavbarItem>
               <MDBNavbarLink href='/'>
                  <p className='header-text'>Home</p>
               </MDBNavbarLink>
              </MDBNavbarItem>
-             {user?.result?._id && (
+             {user?.id && (
               <>
               <MDBNavbarItem>
               <MDBNavbarLink href='/addTour'>
@@ -50,7 +62,7 @@ function Header() {
              </MDBNavbarItem>
               </>
              )}
-             {user?.result?._id? (
+             {user?.id? (
              
                 <MDBNavbarItem>
                  <MDBNavbarLink href='/login'>
@@ -63,9 +75,7 @@ function Header() {
                  <p className='header-text'>Login</p>
               </MDBNavbarLink>
              </MDBNavbarItem>
-             )}
-             
-             
+             )}            
            </MDBNavbarNav>
         </MDBCollapse>
       </MDBContainer>

@@ -21,8 +21,13 @@ const tourSchema = mongoose.Schema({
     likeCount: {
         type: Number,
         default: 0
+    },
+    listed: {
+        type: Boolean,
+        default: false
     }
-}, { timestamps: true })
+},
+ { timestamps: true })
 
 const TourModel = mongoose.model('Tour', tourSchema);
 

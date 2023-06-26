@@ -3,11 +3,12 @@ import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDB
 import { Link, useNavigate } from 'react-router-dom'; 
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
-import { resetPassword } from '../Redux/api';
+import axios from 'axios';
+import Header from '../Components/Header';
 
 const initialState = {
-    email : "",
-    password : ""
+    password : "",
+    resetPassword : ""
 }
 function ResetPassword() {
     const [formValue, setFormValue] = useState(initialState)
@@ -20,18 +21,28 @@ function ResetPassword() {
        error && toast.error(error)
     }, [error]);
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = async (e) =>{
        e.preventDefault()
        if(password && confirmPassword){
-        dispatch(resetPassword({formValue, navigate, toast}))
+        try {
+            const response = await axios.post('http://localhost:5000/users/resetPassword', { password, confirmPassword } );
+            if (response.status === 200) {
+              navigate('/login');
+              toast.success("Password reset successfully!!")
+            }
+          } catch (error) {
+            toast.error("error")
+          }
        }
     }
-    const onInputChange = (e)=>{
-       let {name, value} = e.target
-       setFormValue({...formValue, [name] : value}) 
-    }
+    const onInputChange = (e) => {
+        let { name, value } = e.target;
+        setFormValue({ ...formValue, [name]: value });
+      };
 
   return (
+    <>
+    <Header/>
     <div style={{
         margin : "auto", 
         padding : '15px',
@@ -86,6 +97,7 @@ function ResetPassword() {
             </MDBCardFooter>
         </MDBCard>
     </div>
+    </>
   )
 }
 
