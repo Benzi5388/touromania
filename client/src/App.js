@@ -19,6 +19,7 @@ import axios from 'axios';
 import ResendOTP from './Pages/ResendOTP'
 import VerifyOtp from './Pages/VerifyOtp';
 
+
 function App() {
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
@@ -39,8 +40,10 @@ function App() {
   }, [dispatch]);
 
   return (
+
    <BrowserRouter>
      <div className='App'>
+      
       <ToastContainer/>
       <Routes>
         <Route path = '/' element = {<Home/>}/>

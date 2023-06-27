@@ -3,10 +3,11 @@ import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDB
 import { Link, useNavigate } from 'react-router-dom'; 
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
-import { googleSignIn, saveUserData } from '../Redux/Features/authSlice';
-import {GoogleLogin} from 'react-google-login'
+import { saveGoogleData, saveUserData } from '../Redux/Features/authSlice';
+import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import Header from '../Components/Header';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 
@@ -17,16 +18,11 @@ const initialState = {
 function Login() {
     const [formValue, setFormValue] = useState(initialState)
     const [loading, setLoading] = useState(false); 
-    // const {loading, error} = useSelector((state) =>({...state.auth}))
     const user = useSelector((state) => state.auth.user);
     console.log(user, "userdata");
     const {email, password} = formValue;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    // useEffect(()=>{
-    //    error && toast.error(error)
-    // }, [error]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,26 +41,58 @@ function Login() {
         }
       };
       
-
     const onInputChange = (e)=>{
        let {name, value} = e.target
        setFormValue({...formValue, [name] : value}) 
     }
 
     const googleSuccess = (res) =>{
-    //    const email = res?.profileObj?.email;
-    //    const name = res?.profileObj?.name;
-    //    const token = res?.tokenId;
-    //    const googleId = res?.googleId;
-    //    const result = {email, name, token, googleId}
-    //    dispatch(googleSignIn({result, navigate, toast}))
+       const email = res?.profileObj?.email;
+       console.log(email, 66666666666);
+       const name = res?.profileObj?.name;
+       const token = res?.tokenId;
+       const googleId = res?.googleId;
+       const result = {email, name, token, googleId}
+       dispatch(saveGoogleData(result))
     };
     const googleFailure = (err) =>{
-        // toast.error(err)
+        toast.error(err)
     };
+
+    //ClientID : "993933691849-nhp1osa0gk1kikh4ovgf3vjd8p9j8r0q.apps.googleusercontent.com"
+    //clientsecret : "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"
+    //api_key : "AIzaSyD5w8YgG9igWBymotjFuALOVq5ALcE3ghQ"
+
+  //   const handleGoogleLogin = async (e) => {
+  //     e.preventDefault()
+  //     let redirectUri = process.env.REACT_APP_SERVER_URL+"/user/auth/google/callback"
+  //     let clientId = "572510792166-vpf7ki1vmt5t7u4er1afdsgn7oe1l1l9.apps.googleusercontent.com"
+  //     try {
+  //         window.open(
+  //             `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=email%20profile`,
+  //             "_self"
+  //         )
+  //     } catch (error) {
+  //         console.log('Google login error:', error);
+  //     }
+  // };
+    
   return (
+    
     <>
     <Header/>
+    {/* <div>
+    <GoogleOAuthProvider clientId="993933691849-jd94dp1eg3fv45gj3nvi8u8a6mq2ms96.apps.googleusercontent.com">
+  <GoogleLogin
+    onSuccess={credentialResponse => {
+      console.log(credentialResponse);
+    }}
+    onError={() => {
+      console.log('Login Failed');
+    }}
+  />
+</GoogleOAuthProvider>
+   </div> */}
     <div style={{
         margin : "auto", 
         padding : '15px',
@@ -127,7 +155,6 @@ function Login() {
                  )}
                  onSuccess={googleSuccess}
                  onFailure={googleFailure}
-                 cookiePolicy='single_host_origin'
                 />
             </MDBCardBody>
             <MDBCardFooter>

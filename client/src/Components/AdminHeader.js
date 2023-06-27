@@ -11,8 +11,7 @@ function AdminHeader() {
     const dispatch = useDispatch();
     const admin = useSelector((state) => state.admin.user);
     const user = useSelector((state) => state.auth.user);
-const navigate = useNavigate();
-    console.log(admin, "1111111111")
+    const navigate = useNavigate();
 
     const handleLogout = () =>{
       dispatch(setLogout())
@@ -27,14 +26,6 @@ const navigate = useNavigate();
       }
     }, [dispatch, navigate]);
 
-    useEffect(() => {
-      const admin = JSON.parse(localStorage.getItem('admin'));
-      if (admin) {
-        navigate('/adminhome'); // Navigate to the admin login route
-      } else {
-        dispatch(setUser(admin)); // Update the admin state in Redux store
-      }
-    }, [dispatch, navigate]);
     
     return (
       <MDBNavbar fixed="top" expand="lg" style={{ backgroundColor: '#f0e6ea' }}>

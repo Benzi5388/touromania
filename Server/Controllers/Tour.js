@@ -1,6 +1,7 @@
 import TourModel from '../Models/Tour.js';
 
 export const createTour = async (req, res) => {
+
   const image = req.file.filename;
   const { title, description, tags, videoUrl, name, creator } = req.body;
   try {
@@ -46,45 +47,23 @@ export const getSingleTour = async (req, res) => {
 
 
 // Controller method to list a tour
-export const listTour = async (req, res) => {
-  const { id } = req.params;
-
+export const deleteTour = async (req, res) => {
+  const id = req.params.id;
+ console.log(id, 3333333333);
   try {
     // Find the tour by ID
     const tour = await TourModel.findById(id);
+    console.log(tour, 222222222);
 
     if (!tour) {
       return res.status(404).json({ message: 'Tour not found' });
     }
 
-    // Update the listed property to true
-    tour.listed = true;
-    await tour.save();
+    // Delete the tour
+    await TourModel.deleteOne({ _id: id });
 
-    res.status(200).json({ message: 'Tour listed successfully' });
+    res.status(200).json({  message: 'Tour deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to list tour', error: error.message });
-  }
-};
-
-// Controller method to unlist a tour
-export const unlistTour = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    // Find the tour by ID
-    const tour = await TourModel.findById(id);
-
-    if (!tour) {
-      return res.status(404).json({ message: 'Tour not found' });
-    }
-
-    // Update the listed property to false
-    tour.listed = false;
-    await tour.save();
-
-    res.status(200).json({ message: 'Tour unlisted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to unlist tour', error: error.message });
+    res.status(500).json({ message: 'Failed to delete tour', error: error.message });
   }
 };

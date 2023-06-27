@@ -23,13 +23,13 @@ const tourSlice = createSlice({
     getTour: (state) => {
       state.loading = true;
       state.error = null;
-    },updateTour: (state, action) => {
-      const { tourId, updatedTourData } = action.payload;
-      const existingTour = state.tours.find((tour) => tour._id === tourId);
-      if (existingTour) {
-        Object.assign(existingTour, updatedTourData);
+    }, updateTour: (state, action) => {
+      const { tourId } = action.payload;
+      const existingTourIndex = state.tours.findIndex((tour) => tour._id === tourId);
+      if (existingTourIndex !== -1) {
+        state.tours.splice(existingTourIndex, 1); // Remove the tour from the tours array
       }
-    },
+    }
     // Other reducers...
   },
 });

@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import AdminHeader from '../Components/AdminHeader';
 import { setUser } from '../Redux/Features/adminSlice';
 import axios from 'axios'
+import Swal from 'sweetalert2'
+import { toast } from 'react-toastify';
 
 
 
@@ -17,19 +19,11 @@ function AdminHome() {
   const admin = useSelector((state) => state.admin.user);
 const navigate = useNavigate();
 
+
 useEffect(() => {
   const admin = JSON.parse(localStorage.getItem('admin'));
   if (!admin) {
     navigate('/adminLogin'); // Navigate to the admin login route
-  } else {
-    dispatch(setUser(admin)); // Update the admin state in Redux store
-  }
-}, [dispatch, navigate]);
-
-useEffect(() => {
-  const admin = JSON.parse(localStorage.getItem('admin'));
-  if (admin) {
-    navigate('/adminhome'); // Navigate to the admin login route
   } else {
     dispatch(setUser(admin)); // Update the admin state in Redux store
   }
@@ -61,16 +55,34 @@ useEffect(() => {
     );
   }
 
-  const handleToggleStatus = (tourId) => {
-    const selectedTour = tours.find((item) => item._id === tourId);
-    const updatedTourData = {
-      ...selectedTour,
-      listed: !selectedTour.listed,
-    };
-    // Dispatch the updateTour action with the updatedTourData
-    dispatch(updateTour(tourId, updatedTourData));
-  };
+
+  const handleDeleteTour = (tourId) => {
+    Swal.fire({
+      title: 'Are you sure you want to delete this tour?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.get(`http://localhost:5000/tour/${tourId}`);
+          dispatch(updateTour(tourId)); // Remove the deleted tour from Redux store
   
+          Swal.fire(
+            'Deleted!',
+            'Tour deleted successfully.',
+            'success'
+          );
+        } catch (error) {
+          console.error(error);
+          toast.error("something went wrong")
+        }
+      }
+    });
+  };
   
 
   const excerpt = (str) => {
@@ -84,6 +96,10 @@ useEffect(() => {
   return (
     <>
     <AdminHeader/>
+    <div className='mt-5'>
+    {tours.length === 0 ? (
+          <h3>No data available</h3>
+        ) : (
     <table className="table align-middle ps-5 pe-5  bg-white" style={{fontSize:"20px"}}>
       <thead className="bg-light">
         <tr>
@@ -117,13 +133,12 @@ useEffect(() => {
               />
               </div>
               <td>
-              <MDBSwitch
-  checked={item.listed}
-  onChange={() => handleToggleStatus(item._id)}
-  className={item.listed ? 'text-success' : 'text-secondary'}
-  label={item.listed ? 'Listed' : 'Unlisted'}
-  id={`toggleSwitch-${item._id}`}
-/>
+              <button
+                      onClick={() => handleDeleteTour(item._id)}
+                      className='btn btn-danger'
+                    >
+                      Delete
+                    </button>
 
 
 
@@ -132,6 +147,8 @@ useEffect(() => {
       ))}
     </tbody>
     </table>
+        )}
+    </div>
   </>
   
   );

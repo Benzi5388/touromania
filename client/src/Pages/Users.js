@@ -1,30 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTour , updateTour, setTours} from '../Redux/Features/tourSlice';
-import { MDBTable, MDBTableBody, MDBTableHead , MDBSpinner, MDBSwitch} from 'mdb-react-ui-kit';
+import axios from 'axios'; // Import Axios
+import { MDBTable, MDBTableBody, MDBTableHead, MDBSpinner, MDBSwitch } from 'mdb-react-ui-kit';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminHeader from '../Components/AdminHeader';
+import { saveUserData} from '../Redux/Features/authSlice';
 import { setUser } from '../Redux/Features/adminSlice';
-
-
 
 function Users() {
   const dispatch = useDispatch();
   const { tours, loading } = useSelector((state) => state.tour);
-  const user = useSelector((state) => state.auth.user);
   const [isLoading, setIsLoading] = useState(true);
   const admin = useSelector((state) => state.admin.user);
-const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  const navigate = useNavigate();
 
-useEffect(() => {
-  const admin = JSON.parse(localStorage.getItem('admin'));
-  if (!admin) {
-    navigate('/adminLogin'); // Navigate to the admin login route
-  } else {
-    dispatch(setUser(admin)); // Update the admin state in Redux store
-  }
-}, [dispatch, navigate]);
+  useEffect(() => {
+    const admin = JSON.parse(localStorage.getItem('admin'));
+    if (!admin) {
+      navigate('/adminLogin'); // Navigate to the admin login route
+    } else {
+      dispatch(setUser(admin)); // Update the admin state in Redux store
+    }
 
+    // Fetch users
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/admin/users'); // Replace with your actual API endpoint
+        const user = response.data; // Assuming the response contains an array of users
+           console.log(user, "userdata");
+        dispatch(saveUserData(user)); // Dispatch an action to save the users in Redux store
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, [dispatch, navigate]);
 
   if (isLoading || loading) {
     return (
@@ -36,79 +49,51 @@ useEffect(() => {
     );
   }
 
-  const handleToggleStatus = (tourId) => {
-    const selectedTour = tours.find((item) => item._id === tourId);
-    const updatedTourData = {
-      ...selectedTour,
-      listed: !selectedTour.listed,
-    };
-    // Dispatch the updateTour action with the updatedTourData
-    dispatch(updateTour(tourId, updatedTourData));
-  };
-  
-  
+  const handleToggleStatus = () => {};
 
-  const excerpt = (str) => {
-    if (str.length > 60) {
-      str = str.substring(0, 45) + "...";
-    }
-    return str;
-  };
-
-  const imageUrl = `http://localhost:5000/uploads/`;
   return (
     <>
-    <AdminHeader/>
-    <table className="table align-middle ps-5 pe-5  bg-white" style={{fontSize:"20px"}}>
+  
+  <AdminHeader />
+   
+    <div className='mt-5'>
+    
+      <table className="table align-middle ps-5 pe-5  bg-white" style={{ fontSize: "20px" }}>
       <thead className="bg-light">
         <tr>
+          <th>Id</th>
           <th>Name</th>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Image</th>
+          <th>Email</th>
           <th>Listing</th>
         </tr>
       </thead>
-      <tbody>
-      {tours.map((item, index) => (
-        <tr key={index} {...item}>
-          <td>
-             <p className="fw-bold mb-1">{item.name}</p>
-          </td>
-          <td>
-            <p className="fw-normal mb-1">{item.title}</p>
-          </td>
-          <td>
-          <p className="text-muted mb-0">{excerpt(item.description)}
-          <Link to={`/adminhome/${item._id}`}>Read More</Link>
-          </p>
-          </td>
-          <div>
-          <img
-                src={imageUrl + item.image}
-                alt=""
-                style={{ width: "45px", height: "45px" }}
-                className="rounded-circle"
-              />
-              </div>
+        <tbody>
+          {user.map((item, index) => (
+            <tr key={index} {...item}>
               <td>
-              <MDBSwitch
-  checked={item.listed}
-  onChange={() => handleToggleStatus(item._id)}
-  className={item.listed ? 'text-success' : 'text-secondary'}
-  label={item.listed ? 'Listed' : 'Unlisted'}
-  id={`toggleSwitch-${item._id}`}
-/>
-
-
-
-                </td>
-        </tr>
-      ))}
-    </tbody>
-    </table>
-  </>
-  
+                <p className="fw-bold mb-1">{item._id}</p>
+              </td>
+              <td>
+                <p className="fw-normal mb-1">{item.name}</p>
+              </td>
+              <td>
+                <p className="fw-normal mb-1">{item.email}</p>
+              </td>
+              <td>
+                <MDBSwitch
+                  checked={item.listed}
+                  onChange={() => handleToggleStatus(item._id)}
+                  className={item.listed ? 'text-success' : 'text-secondary'}
+                  label={item.listed ? 'Listed' : 'Unlisted'}
+                  id={`toggleSwitch-${item._id}`}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      </div>
+    </>
   );
 }
 

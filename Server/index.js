@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import userRouter from './Routes/User.js';
 import tourRouter from './Routes/tour.js';
 import adminRouter from './Routes/Admin.js';
-
 import dotenv from 'dotenv';
 import path from 'path'
 import cookieParser from 'cookie-parser';
@@ -18,7 +17,10 @@ app.use(express.json({limit :'50mb', extended : true}))
 app.use(express.urlencoded({limit :'10mb', extended : true}))
 app.use(cookieParser())
 app.use(express.static(path.resolve()+'/public'))
-const allowedOrigins = ['http://localhost:3000'];
+
+
+const allowedOrigins = ['http://localhost:3000', 'https://accounts.google.com'];
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.includes(origin) || !origin) {
@@ -32,18 +34,23 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-  dotenv.config()
+
 
 // Set COOP headers in your Express app
+
 // app.use((req, res, next) => {
 //     res.set("Cross-Origin-Opener-Policy", 'same-origin');
 //     next();
 //   });
 
-app.use((req, res, next) => {
-  res.header("Cache-Control", "no-cache, private, no-store, must-revalidate");
-  next();
-})
+  dotenv.config()
+
+  app.use((req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+    next();
+  });
+
   
 app.use('/users', userRouter);
 app.use('/tour', tourRouter);
