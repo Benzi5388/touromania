@@ -63,7 +63,7 @@ function Home() {
         )}
         <MDBCol>
           <MDBContainer>
-            <MDBRow className='row-cols-1 row-cols-md-3 g2 g-2'>
+            <MDBRow className='row-cols-1 row-cols-md-3 g2 g-4'>
               {tours && tours.map((item, index) => <CardTour key={index} {...item}/>
                 )}
             </MDBRow>

@@ -28,11 +28,17 @@ const authSlice = createSlice({
       state.formValue = action.payload;
     },saveGoogleData: (state, action) => {
       state.googleData = action.payload;
-    },
+    },updateUser: (state, action) => {
+      const { userId } = action.payload;
+      const existingUserIndex = state.user.findIndex((user) => user._id === userId);
+      if (existingUserIndex !== -1) {
+        state.user.splice(existingUserIndex, 1); // Remove the tour from the tours array
+      }
+    }
   },
 });
 
-export const { saveUserData, setLogout, resendOTP, register, saveEmail, saveGoogleData } = authSlice.actions;
+export const { saveUserData, setLogout, resendOTP, register, saveEmail, saveGoogleData, updateUser } = authSlice.actions;
 
 export default authSlice.reducer;
 

@@ -13,16 +13,16 @@ function CardTour({title, description, tags, _id, name, image}) {
     const imageUrl = `http://localhost:5000/uploads/${image}`;
   return (
     <MDBCardGroup>
-        <MDBCard className='h-100 mt-2 d-sm-flex' style={{maxWidth:"20rem"}}>
+        <MDBCard className='h-100 mt-3 d-sm-flex mdbcard'>
             <MDBCardImage
-            src={imageUrl}
+            className='card-image'
+            src={image}
             alt={title}
             position='top'
-            style={{maxWidth:"100%", height:"180px"}}
             />
             <div className='top-left'>{name}</div>
             <span className='text-start tag-card'>{tags.map((item)=> `#${item}`)}</span>
-        <MDBCardBody>
+        <MDBCardBody >
             <MDBCardTitle className='text-start'>{title}</MDBCardTitle>
             <MDBCardText className='text-start'>{excerpt(description)}
             <Link to={`/tour/${_id}`}>Read More</Link>

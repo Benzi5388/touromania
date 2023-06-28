@@ -18,6 +18,7 @@ app.use(express.urlencoded({limit :'10mb', extended : true}))
 app.use(cookieParser())
 app.use(express.static(path.resolve()+'/public'))
 
+app.use('/uploads', express.static('public/uploads'));
 
 const allowedOrigins = ['http://localhost:3000', 'https://accounts.google.com'];
 

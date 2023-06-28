@@ -1,82 +1,78 @@
-import React, {useState, useEffect} from 'react';
-import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDBSpinner, MDBBtn, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav} from 'mdb-react-ui-kit';
+import React, { useState, useEffect } from 'react';
+import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav } from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, saveUserData } from '../Redux/Features/authSlice';
-import Cookies from 'js-cookie';
-import axios from 'axios'
-
+import App.css from './App';
 
 function Header() {
-    const [show, setShow] = useState(false)
-    const dispatch = useDispatch();
-    
-    const handleLogout = () =>{
-      dispatch(setLogout())
+  const [show, setShow] = useState(false)
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(setLogout())
+  }
+  useEffect(() => {
+    // Fetch user data from the Redux store directly
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      dispatch(saveUserData(JSON.parse(userData)));
     }
-    useEffect(() => {
-      // Fetch user data from the Redux store directly
-      const userData = localStorage.getItem('userData');
-      if (userData) {
-        dispatch(saveUserData(JSON.parse(userData)));
-      }
-    }, [dispatch]);
-    
-    
-    const user = useSelector((state) => (state.auth.user))
-    console.log(user, "fsthgfd");
+  }, [dispatch]);
+
+  const user = useSelector((state) => (state.auth.user))
   return (
-    <MDBNavbar fixed="top" expand ="lg" style = {{backgroundColor : '#f0e6ea'}}>
+    <MDBNavbar className= "header-navbar" fixed="top" expand="lg">
       <MDBContainer>
-        <MDBNavbarBrand href = '/' style = {{color: '#606080', fontWeight :'600', fontSize:'22px'}}>
-            Touropedia
+        <MDBNavbarBrand className = "header-navbar-brand" href='/'>
+          Touropedia
         </MDBNavbarBrand>
         <MDBNavbarToggler
-        type="button"
-        aria-expanded = "false"
-        aria-label ="Toggle navigation"
-        onClick = {() => setShow(!show)}
+          type="button"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          onClick={() => setShow(!show)}
         >
-          <MDBIcon icon ="bars" fas/>
+          <MDBIcon icon="bars" fas />
         </MDBNavbarToggler>
         <MDBCollapse show={show} navbar>
-           <MDBNavbarNav right fullwidth={false} className='mb-2 mb-lg-0 justify-content-end'>
+          <MDBNavbarNav right fullwidth={false} className='mb-2 mb-lg-0 justify-content-end'>
             {user?.id && (
-              <h5 style ={{marginRight:'30px', marginTop:'17px'}}>Welcome : {user?.name} </h5>
+              <h5 className = "navbar-nav">Welcome : {user?.name} </h5>
             )}
-             <MDBNavbarItem>
+            <MDBNavbarItem>
               <MDBNavbarLink href='/'>
-                 <p className='header-text'>Home</p>
+                <p className='header-text'>Home</p>
               </MDBNavbarLink>
-             </MDBNavbarItem>
-             {user?.id && (
+            </MDBNavbarItem>
+            {user?.id && (
               <>
-              <MDBNavbarItem>
-              <MDBNavbarLink href='/addTour'>
-                 <p className='header-text'>Add Tour</p>
-              </MDBNavbarLink>
-             </MDBNavbarItem>
-             <MDBNavbarItem>
-              <MDBNavbarLink href='/dashboard'>
-                 <p className='header-text'>Dashboard</p>
-              </MDBNavbarLink>
-             </MDBNavbarItem>
-              </>
-             )}
-             {user?.id? (
-             
                 <MDBNavbarItem>
-                 <MDBNavbarLink href='/login'>
-                 <p onClick= {handleLogout} className='header-text'>Logout</p>
-                 </MDBNavbarLink>
-                 </MDBNavbarItem>) :
-              (
+                  <MDBNavbarLink href='/addTour'>
+                    <p className='header-text'>Add Tour</p>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/dashboard'>
+                    <p className='header-text'>Dashboard</p>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+              </>
+            )}
+            {user?.id ? (
+
               <MDBNavbarItem>
-              <MDBNavbarLink href='/login'>
-                 <p className='header-text'>Login</p>
-              </MDBNavbarLink>
-             </MDBNavbarItem>
-             )}            
-           </MDBNavbarNav>
+                <MDBNavbarLink href='/login'>
+                  <p onClick={handleLogout} className='header-text'>Logout</p>
+                </MDBNavbarLink>
+              </MDBNavbarItem>) :
+              (
+                <MDBNavbarItem>
+                  <MDBNavbarLink href='/login'>
+                    <p className='header-text'>Login</p>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+              )}
+          </MDBNavbarNav>
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>

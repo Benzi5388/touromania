@@ -7,7 +7,7 @@ import { upload } from "../Helpers/multer.js";
 
 
 
-router.post('/', auth, upload.single('file'), createTour);
+router.post('/', upload.single('file'), createTour);
 router.get('/',getTour);
 router.get('/:id', deleteTour);
 

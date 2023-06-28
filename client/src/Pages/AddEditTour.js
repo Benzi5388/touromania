@@ -124,7 +124,7 @@ navigate('/');
               />
             </div>
               <div className="d-flex justify-content-start">
-              <input type="file" onChange={(e)=>setImage(e.target.files[0])} className='mt-4 mb-2' accept='image/*' />
+              <input type="file" name="file" onChange={(e)=>setImage(e.target.files[0])} className='mt-4 mb-2' accept='image/*' />
               </div>
               <div className="col-12">
                 <MDBBtn style={{width:'100%'}}>Submit</MDBBtn>

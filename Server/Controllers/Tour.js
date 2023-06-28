@@ -1,15 +1,21 @@
 import TourModel from '../Models/Tour.js';
+import { Cloudinaryupload } from '../Helpers/Cloudinary.js';
 
 export const createTour = async (req, res) => {
-
-  const image = req.file.filename;
+  // const image = req.file.filename;
   const { title, description, tags, videoUrl, name, creator } = req.body;
   try {
+    const image = [req.file.path]; // Assuming the uploaded image is stored in req.file
+
+    // Upload images to Cloudinary
+    const uploadedImage = await Cloudinaryupload(image);
+    console.log(uploadedImage[0].url, "ttttttttttt");
+    // const imageUrl = uploadedImage.secure_url
     const newTour = new TourModel({
       title,
       description,
       tags,
-      image,
+      image : uploadedImage[0].url,
       videoUrl,
       name,
       creator
@@ -49,19 +55,14 @@ export const getSingleTour = async (req, res) => {
 // Controller method to list a tour
 export const deleteTour = async (req, res) => {
   const id = req.params.id;
- console.log(id, 3333333333);
   try {
     // Find the tour by ID
     const tour = await TourModel.findById(id);
-    console.log(tour, 222222222);
-
     if (!tour) {
       return res.status(404).json({ message: 'Tour not found' });
     }
-
     // Delete the tour
     await TourModel.deleteOne({ _id: id });
-
     res.status(200).json({  message: 'Tour deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete tour', error: error.message });

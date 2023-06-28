@@ -189,7 +189,21 @@ export const resetPassword = async (req, res) => {
 };
 
 
-
+export const deleteUser = async (req, res) => {
+  const id = req.params.id;
+  try {
+    // Find the tour by ID
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    // Delete the tour
+    await UserModel.deleteOne({ _id: id });
+    res.status(200).json({  message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete user', error: error.message });
+  }
+};
 
 
 export const googleSignIn = async (req, res) => {

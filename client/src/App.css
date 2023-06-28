@@ -1,38 +1,44 @@
-.App {
-  text-align: center;
+/* ADMIN-HEADER COMPONENT */
+
+.mdbnavbar{
+  background-color: '#f0e6ea'
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.mdbnavbar-brand{
+  color: #606080;
+  font-weight: 600;
+  font-size: 22px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ********************************************************************* */
+
+/* CARD COMPONENT */
+
+.mdbcard {
+  max-width: '20rem';
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.card-image{
+  max-width:"100%";
+  height:"180px"
 }
 
-.App-link {
-  color: #61dafb;
+/* *************************************************************************** */
+
+/* HEADER */
+
+.header-navbar{
+  background-color: '#f0e6ea'
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.header-navbar-brand{
+  color: '#606080';
+  font-weight: '600';
+  font-size: '22px' 
 }
+
+.navbar-nav{
+  margin-right: '30px';
+  margin-top: '17px'
+}
+

@@ -28,9 +28,9 @@ function AdminHeader() {
 
     
     return (
-      <MDBNavbar fixed="top" expand="lg" style={{ backgroundColor: '#f0e6ea' }}>
+      <MDBNavbar fixed="top" expand="lg" className="mdbnavbar">
         <MDBContainer>
-          <MDBNavbarBrand href="/" style={{ color: '#606080', fontWeight: '600', fontSize: '22px' }}>
+          <MDBNavbarBrand className="mdbnavbar-brand" href="/">
             Touropedia
           </MDBNavbarBrand>
           <MDBNavbarToggler
