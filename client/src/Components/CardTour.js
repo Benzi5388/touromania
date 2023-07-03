@@ -1,6 +1,7 @@
 import React from 'react'
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardImage, MDBCardGroup } from 'mdb-react-ui-kit' 
 import { Link } from 'react-router-dom';
+import '../App.css'
 
 function CardTour({title, description, tags, _id, name, image}) {
     const excerpt = (str) => {
@@ -13,7 +14,7 @@ function CardTour({title, description, tags, _id, name, image}) {
     const imageUrl = `http://localhost:5000/uploads/${image}`;
   return (
     <MDBCardGroup>
-        <MDBCard className='h-100 mt-3 d-sm-flex mdbcard'>
+        <MDBCard className='h-100 mt-3 d-sm-flex mdb-card'>
             <MDBCardImage
             className='card-image'
             src={image}

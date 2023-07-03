@@ -7,7 +7,6 @@ import { deleteUser, getUsers } from "../Controllers/User.js";
 
 
 router.post('/adminlogin', signin);
-
 router.get('/users', getUsers)
 router.get('/:id', deleteUser);
 

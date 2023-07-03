@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav } from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, saveUserData } from '../Redux/Features/authSlice';
-import App.css from './App';
+import  '../App.css';
 
 function Header() {
   const [show, setShow] = useState(false)
@@ -52,7 +52,7 @@ function Header() {
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/dashboard'>
+                  <MDBNavbarLink href='/UserDashboard'>
                     <p className='header-text'>Dashboard</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>

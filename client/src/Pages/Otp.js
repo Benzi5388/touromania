@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { verify, resendOTP, register } from '../Redux/Features/authSlice';
 import axios from 'axios';
 import Header from '../Components/Header';
+import '../App.css'
 
 const initialState = {
   otp: '',
@@ -106,15 +107,7 @@ function Otp() {
 
   return (
     <>
-    <Header/>
-    <div
-      style={{
-        margin: 'auto',
-        padding: '15px',
-        maxWidth: '450px',
-        alignContent: 'center',
-        marginTop: '120px',
-      }}
+    <div className='header-container'
     >
       <MDBCard alignment="center">
         <MDBIcon fas icon="user-circle" className="fa-2x"></MDBIcon>
@@ -138,13 +131,13 @@ function Otp() {
               {timer > 0 ? (
                 <p>Resend OTP in {timer} seconds</p>
               ) : (
-                <MDBBtn style={{ width: '100%' }} onClick={handleResendOTP} disabled={resendDisabled}>
+                <MDBBtn className = "login-btn" onClick={handleResendOTP} disabled={resendDisabled}>
                   Resend OTP
                 </MDBBtn>
               )}
             </div>
             <div className="col-12">
-              <MDBBtn style={{ width: '100%' }} className="mt-2" type="submit" onClick={handleSubmit}>
+              <MDBBtn className="mt-2 login-btn" type="submit" onClick={handleSubmit}>
                 {loading ? (
                   <>
                     <MDBSpinner size="sm" role="status" tag="span" className="me-2" />

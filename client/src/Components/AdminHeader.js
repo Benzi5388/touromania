@@ -3,6 +3,7 @@ import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDB
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, setUser } from '../Redux/Features/adminSlice';
 import { Link, useNavigate } from 'react-router-dom';
+import '../App.css'
 
 
 

@@ -8,7 +8,7 @@ import { setUser } from '../Redux/Features/adminSlice';
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
-
+import '../App.css'
 
 
 function AdminHome() {
@@ -48,7 +48,7 @@ function AdminHome() {
   if (isLoading || loading) {
     return (
       <>
-        <div style={{ margin: "auto", paddingTop: "200px", textAlign: "center" }}>
+        <div className = "spinner">
           <MDBSpinner grow size='big' />
         </div>
       </>
@@ -100,7 +100,7 @@ function AdminHome() {
         {tours.length === 0 ? (
           <h3>No data available</h3>
         ) : (
-          <table className="table align-middle ps-5 pe-5  bg-white" style={{ fontSize: "20px" }}>
+          <table className="table align-middle ps-5 pe-5  bg-white tour-table">
             <thead className="bg-light">
               <tr>
                 <th>Name</th>
@@ -126,10 +126,9 @@ function AdminHome() {
                   </td>
                   <div>
                     <img
-                      src={imageUrl + item.image}
+                      src={item.image}
                       alt=""
-                      style={{ width: "45px", height: "45px" }}
-                      className="rounded-circle"
+                      className="rounded-circle tour-image"
                     />
                   </div>
                   <td>

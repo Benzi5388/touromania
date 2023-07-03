@@ -6,6 +6,7 @@ import { setTours } from '../Redux/Features/tourSlice';
 import CardTour from '../Components/CardTour';
 import Header from '../Components/Header'
 import axios from 'axios';
+import '../App.css';
 
 
 function Home() {
@@ -26,7 +27,6 @@ function Home() {
         setIsLoading(false);
       }
     };
-
     fetchTourData();
   }, [dispatch]);
 
@@ -39,7 +39,7 @@ function Home() {
   if (isLoading || loading) {
     return (
       <>
-        <div style={{ margin: "auto", paddingTop: "200px", textAlign: "center" }}>
+        <div className='spinner'>
           <MDBSpinner grow size='big' />
         </div>
       </>
@@ -49,21 +49,19 @@ function Home() {
   return (
     <>
     <Header/>
-    <div style={{
-      margin:"auto",
-      padding:"15px",
-      maxWidth :"1000px",
-      alignContent:"center"
-    }}>
-      <MDBRow className='mt-5'>
+    <div className='header-container'>
+      <MDBRow className='mt-4'>
         {tours.length === 0 && (
-          <MDBTypography className='text-center mb-0' tag="h2">
-            No Tours Found
-          </MDBTypography>
+          <MDBCol className='text-center'>
+          <div className="no-tour-container">
+            <h3 className="no-tour-text text-muted">No Tour Found</h3>
+            <img src="/notou.jpg" alt="No Tours Found" className="no-tour-image" />
+          </div>
+        </MDBCol>
         )}
-        <MDBCol>
-          <MDBContainer>
-            <MDBRow className='row-cols-1 row-cols-md-3 g2 g-4'>
+        <MDBCol  className ="card-contain">
+          <MDBContainer >
+            <MDBRow className=' row-cols-1 row-cols-md-3 g2 g-4'>
               {tours && tours.map((item, index) => <CardTour key={index} {...item}/>
                 )}
             </MDBRow>

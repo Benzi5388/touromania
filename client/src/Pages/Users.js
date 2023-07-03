@@ -8,6 +8,8 @@ import { saveUserData ,updateUser } from '../Redux/Features/authSlice';
 import { setUser } from '../Redux/Features/adminSlice';
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
+import '../App.css'
+import '../App.css'
 
 
 function Users() {
@@ -83,7 +85,7 @@ function Users() {
     <>
       <AdminHeader />
       <div className='mt-5'>
-        <table className="table align-middle ps-5 pe-5  bg-white" style={{ fontSize: "20px" }}>
+        <table className="table align-middle ps-5 pe-5  bg-white tour-table">
           <thead className="bg-light">
             <tr>
               <th>Id</th>

@@ -1,10 +1,10 @@
 /* ADMIN-HEADER COMPONENT */
 
-.mdbnavbar{
-  background-color: '#f0e6ea'
+.mdbnavbar {
+  background-color: #f0e6ea;
 }
 
-.mdbnavbar-brand{
+.mdbnavbar-brand {
   color: #606080;
   font-weight: 600;
   font-size: 22px;
@@ -14,31 +14,146 @@
 
 /* CARD COMPONENT */
 
-.mdbcard {
-  max-width: '20rem';
+.mdb-card {
+  max-width: 20rem !important;
 }
 
-.card-image{
-  max-width:"100%";
-  height:"180px"
+.card-image {
+  max-width: 100% !important;
+  height: 180px !important;
+}
+
+.card-contain {
+  display: flex !important;
+  justify-content: center !important;
+  width: 1100px !important;
 }
 
 /* *************************************************************************** */
 
 /* HEADER */
 
-.header-navbar{
-  background-color: '#f0e6ea'
+.header-navbar {
+  background-color: #f0e6ea !important;
 }
 
-.header-navbar-brand{
-  color: '#606080';
-  font-weight: '600';
-  font-size: '22px' 
+.header-navbar-brand {
+  color: #606080 !important;
+  font-weight: 600 !important;
+  font-size: 22px !important;
 }
 
-.navbar-nav{
-  margin-right: '30px';
-  margin-top: '17px'
+.navbar-nav {
+  margin-right: 30px !important;
+  margin-top: 17px !important;
 }
 
+/* ****************************************************************************** */
+
+/* ADD/EDIT TOUR PAGE */
+
+.header-container {
+  margin: auto !important;
+  padding: 15px !important;
+  max-width: 450px !important;
+  align-content: center !important;
+  margin-top: 120px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.description {
+  height: 100px !important;
+}
+
+.add-button {
+  width: 100% !important;
+}
+
+/* ********************************************************************************** */
+
+/* ADMINHOME */
+
+.spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.tour-table {
+  font-size: 20px !important;
+}
+
+.tour-image {
+  width: 45px !important;
+  height: 45px !important;
+}
+
+/* ************************************************************************** */
+
+/* ADMIN LOGIN */
+
+.login-btn {
+  width: 100% !important;
+}
+
+/* ********************************************************************************** */
+
+/* SINGLE TOUR PAGE */
+
+.calendar-icon {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* ************************************************************************************* */
+
+/* USER DASHBOARD PAGE */
+
+.dashboard_container {
+  margin: auto;
+  padding: 120px;
+  max-width: 900px;
+  align-content: center;
+}
+
+.icon_style {
+  margin: 5px;
+  float: right;
+  margin-top: -60px;
+}
+
+.edit_icon {
+  color: #55acee;
+  margin-left: 10px;
+}
+
+/* *************************************************************************************** */
+
+/* HOME PAGE */
+
+.no-tour-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.no-tour-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.no-tour-image {
+  display: block;
+  margin: 0 auto;
+  height: auto;
+}

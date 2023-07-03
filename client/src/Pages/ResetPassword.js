@@ -5,7 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Header from '../Components/Header';
-
+import '../App.css'
 const initialState = {
     password : "",
     resetPassword : ""
@@ -42,13 +42,7 @@ function ResetPassword() {
 
   return (
     <>
-    <Header/>
-    <div style={{
-        margin : "auto", 
-        padding : '15px',
-        maxWidth : '450px', 
-        alignContent :"center",
-        marginTop :'120px'  }}
+    <div className='header-container'
         >
         <MDBCard alignment='center'>
             <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
@@ -76,8 +70,7 @@ function ResetPassword() {
                      validation="Please reconfirm your password"/>
                    </div>
                    <div className="col-12">
-                    <MDBBtn style={{
-                        width : "100%"}} className='mt-2'>
+                    <MDBBtn className='mt-2 login-btn'>
                             {loading && (
                                 <MDBSpinner
                                 size= 'sm'

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { register } from '../Redux/Features/authSlice';
 import axios from 'axios';
 import Header from '../Components/Header';
+import '../App.css'
 
 const initialState = {
     firstName : "",
@@ -50,13 +51,7 @@ function Register() {
   return (
     <>
     <Header/>
-    <div style={{
-        margin : "auto", 
-        padding : '15px',
-        maxWidth : '450px', 
-        alignContent :"center",
-        marginTop :'120px'  }}
-        >
+    <div className = "header-container">
         <MDBCard alignment='center'>
             <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
             <h5>Sign Up</h5>
@@ -116,8 +111,7 @@ function Register() {
                      validation="Please reconfirm your password"/>
                    </div>
                    <div className="col-12">
-                    <MDBBtn style={{
-                        width : "100%"}} className='mt-2'>
+                    <MDBBtn className='mt-2 login-btn'>
                             {loading && (
                                 <MDBSpinner
                                 size= 'sm'

@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { setUser } from '../Redux/Features/adminSlice';
+import '../App.css'
 
 const initialState = {
     email : "",
@@ -39,13 +40,7 @@ function Login() {
     }
 
   return (
-    <div style={{
-        margin : "auto", 
-        padding : '15px',
-        maxWidth : '450px', 
-        alignContent :"center",
-        marginTop :'120px'  }}
-        >
+    <div className ="header-container" >
         <MDBCard alignment='center'>
             <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
             <h5>Sign In</h5>
@@ -73,8 +68,7 @@ function Login() {
                      validation="Please provide your password"/>
                    </div>
                    <div className="col-12">
-                    <MDBBtn style={{
-                        width : "100%"}} className='mt-2'>
+                    <MDBBtn className='mt-2 login-btn'>
                             {loading && (
                                 <MDBSpinner
                                 size= 'sm'

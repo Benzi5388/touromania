@@ -8,6 +8,7 @@ import { GoogleLogin } from 'react-google-login';
 import axios from 'axios';
 import Header from '../Components/Header';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import '../App.css'
 
 
 
@@ -25,21 +26,26 @@ function Login() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (email && password) {
-          const response = await axios.post('http://localhost:5000/users/signin', { formValue }).catch((err) => console.log(err));
+      e.preventDefault();
+      if (email && password) {
+        try {
+          const response = await axios.post('http://localhost:5000/users/signin', { formValue });
           if (response.data.token) {
             const { token, userData } = response.data;
             localStorage.setItem('token', token);
             localStorage.setItem('userData', JSON.stringify(userData));
             dispatch(saveUserData(userData));
             navigate('/');
-            toast.success("Logged in Successfully")
+            toast.success("Logged in Successfully");
           } else {
-            toast.error(response.data.message);
+            toast.error("Invalid credentials");
           }
+        } catch (error) {
+          toast.error("Invalid credentials");
         }
-      };
+      }
+    };
+    
       
     const onInputChange = (e)=>{
        let {name, value} = e.target
@@ -93,13 +99,7 @@ function Login() {
   />
 </GoogleOAuthProvider>
    </div> */}
-    <div style={{
-        margin : "auto", 
-        padding : '15px',
-        maxWidth : '450px', 
-        alignContent :"center",
-        marginTop :'120px'  }}
-        >
+    <div className='header-container'>
         <MDBCard alignment='center'>
             <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
             <h5>Sign In</h5>
@@ -127,8 +127,7 @@ function Login() {
                      validation="Please provide your password"/>
                    </div>
                    <div className="col-12">
-                    <MDBBtn style={{
-                        width : "100%"}} className='mt-2'>
+                    <MDBBtn className='mt-2 login-btn'>
                             {loading &&(
                                 <MDBSpinner
                                 size= 'sm'
@@ -145,11 +144,10 @@ function Login() {
                 <GoogleLogin
                  clientId='993933691849-jd94dp1eg3fv45gj3nvi8u8a6mq2ms96.apps.googleusercontent.com'
                  render={(renderProps) => (
-                    <MDBBtn style = {{width:'100%'}} 
+                    <MDBBtn className="login-btn"
                     color = "danger" 
                     onClick = {renderProps.onClick}
-                    disabled = {renderProps.disabled}
-                >
+                    disabled = {renderProps.disabled}>
                       <MDBIcon className='me-2' fab icon= "google"/>Google Sign In
                     </MDBBtn>
                  )}
