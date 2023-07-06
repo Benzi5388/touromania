@@ -107,12 +107,28 @@ export const signup = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6; // Specify the desired limit per page
+    const skip = (parseInt(page) - 1) * limit;
+
+    const totalUsers = await UserModel.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+
     const users = await UserModel.find()
-    res.status(200).json(users)
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      users,
+      totalPages,
+      currentPage: page,
+    });
   } catch (err) {
-    res.status(404).json({ message: "Something went wrong" })
+    res.status(404).json({ message: "Something went wrong" });
   }
-}
+};
+
 
 export const regenerateAndSendOTP = async (req, res) => {
   const { email } = req.body; // Retrieve email from request body

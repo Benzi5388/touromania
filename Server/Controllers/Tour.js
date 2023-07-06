@@ -16,7 +16,7 @@ export const createTour = async (req, res) => {
       title,
       description,
       tags,
-      image : uploadedImage[0].url,
+      image: uploadedImage[0].url,
       videoUrl,
       name,
       creator
@@ -34,8 +34,56 @@ export const createTour = async (req, res) => {
 
 export const getTour = async (req, res) => {
   try {
-    const tours = await TourModel.find()
-    res.status(200).json(tours)
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6;
+    const skip = (parseInt(page) - 1) * limit;
+
+    const searchQuery = req.query.search;
+    const searchFilters = {};
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+
+    console.log(endDate, "enddate");
+    console.log(startDate, "startdate");
+    if (startDate && endDate) {
+      // Convert the start and end dates to ISO format
+      const isoStartDate = new Date(startDate).toISOString();
+      const isoEndDate = new Date(endDate).toISOString();
+
+      // Add the date filter to the search filters
+      searchFilters.createdAt = { $gte: isoStartDate, $lte: isoEndDate };
+    }
+    if (searchQuery) {
+      searchFilters.$or = [
+        { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
+        { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
+        { name: { $regex: `^${searchQuery}`, $options: 'i' } }
+      ];
+    }
+
+    const sortOption = req.query.sort || 'recent';
+    const sortQuery = {};
+
+    if (sortOption === 'recent') {
+      sortQuery.createdAt = -1; // Sort by descending createdAt
+    } else if (sortOption === 'likes') {
+      sortQuery.likeCount = -1; // Sort by descending likeCount
+    }
+
+    const totalTours = await TourModel.countDocuments(searchFilters);
+    const totalPages = Math.ceil(totalTours / limit);
+
+    const tours = await TourModel.find(searchFilters)
+      .sort(sortQuery)
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      tours,
+      totalPages: totalPages,
+      currentPage: page,
+    });
   } catch (err) {
     res.status(404).json({ message: "Something went wrong" })
   }
@@ -65,7 +113,7 @@ export const deleteTour = async (req, res) => {
     }
     // Delete the tour
     await TourModel.deleteOne({ _id: id });
-    res.status(200).json({  message: 'Tour deleted successfully' });
+    res.status(200).json({ message: 'Tour deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete tour', error: error.message });
   }
@@ -107,12 +155,40 @@ export const updateTour = async (req, res) => {
 };
 
 
-export const getToursByUser = async (req, res) =>{
-  const id = req.params.id
-  console.log(id, "iddddddddd");
-  if(!mongoose.Types.ObjectId.isValid(id)){
-    res.status(404).json({message : "user doesnt exist"})
+export const getToursByUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6; // Specify the desired limit per page
+    const skip = (parseInt(page) - 1) * limit;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ message: "User doesn't exist" });
+    }
+
+    const searchQuery = req.query.search;
+    const searchFilters = {};
+
+    if (searchQuery) {
+      searchFilters.$or = [
+        { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
+        { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
+      ];
+    }
+    const totalTours = await TourModel.countDocuments({ creator: id, ...searchFilters });
+    const totalPages = Math.ceil(totalTours / limit);
+
+    const userTours = await TourModel.find({ creator: id, ...searchFilters })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      userTours,
+      totalPages,
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(404).json({ message: "Something went wrong" });
   }
-  const userTours = await TourModel.find({creator : id})
-  res.status(200).json(userTours)
-}
+};

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios'; // Import Axios
-import { MDBSpinner} from 'mdb-react-ui-kit';
+import { MDBSpinner, MDBRow, MDBContainer,MDBCol, MDBPagination, MDBPaginationItem, MDBPaginationLink,} from 'mdb-react-ui-kit';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../Components/AdminHeader';
 import { saveUserData ,updateUser } from '../Redux/Features/authSlice';
@@ -19,6 +19,8 @@ function Users() {
   const admin = useSelector((state) => state.admin.user);
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -31,17 +33,18 @@ function Users() {
     // Fetch users
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/admin/users'); // Replace with your actual API endpoint
-        const user = response.data; // Assuming the response contains an array of users
+        const response = await axios.get(`http://localhost:5000/admin/users?page=${currentPage}`); // Replace with your actual API endpoint
+        const user = response.data.users; // Assuming the response contains an array of users
         console.log(user, "userdata");
         dispatch(saveUserData(user)); // Dispatch an action to save the users in Redux store
+        setTotalPages(response.data.totalPages);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     };
     fetchUsers();
-  }, [dispatch, navigate]);
+  }, [currentPage, dispatch, navigate]);
 
   if (isLoading || loading) {
     return (
@@ -118,6 +121,36 @@ function Users() {
           </tbody>
         </table>
       </div>
+      <nav aria-label='...'>
+      <MDBRow className='pagination-row'>
+            <MDBCol>
+              <MDBContainer>
+                <nav aria-label='...'>
+                  <MDBPagination circle className='mb-0'>
+                    <MDBPaginationItem disabled={currentPage === 1}>
+                      <MDBPaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+                        Previous
+                      </MDBPaginationLink>
+                    </MDBPaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <MDBPaginationItem active={currentPage === page} key={page}>
+                        <MDBPaginationLink onClick={() => setCurrentPage(page)}>
+                          {page}
+                        </MDBPaginationLink>
+                      </MDBPaginationItem>
+                    ))}
+                    <MDBPaginationItem disabled={currentPage === totalPages}>
+                      <MDBPaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+                        Next
+                      </MDBPaginationLink>
+                    </MDBPaginationItem>
+                  </MDBPagination>
+
+                </nav>
+              </MDBContainer>
+            </MDBCol>
+          </MDBRow>
+    </nav>
     </>
   );
 }

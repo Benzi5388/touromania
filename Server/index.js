@@ -58,7 +58,6 @@ app.use('/tour', tourRouter);
 app.use('/admin', adminRouter);
 
 
-
 mongoose.set("strictQuery", false)
 mongoose.connect(process.env.MONGODB,
   { useNewUrlParser: true, useUnifiedTopology: true, w: 'majority' }

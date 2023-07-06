@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { MDBCard, MDBCardTitle, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBBtn, MDBIcon, MDBCardGroup, MDBSpinner, MDBCol } from "mdb-react-ui-kit";
+import { MDBCard, MDBCardTitle, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBBtn, MDBIcon, MDBCardGroup, MDBSpinner, MDBCol, MDBContainer, MDBPaginationItem, MDBPaginationLink, MDBPagination } from "mdb-react-ui-kit";
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { setToursByUser, updateTour } from '../Redux/Features/tourSlice';
 import axios from 'axios';
 import Header from '../Components/Header';
@@ -18,6 +18,8 @@ function UserDashboard() {
   const userId = user?.id;
   console.log(userId, "cccccccccccc");
   const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const handleDeleteTour = (tourId) => {
     Swal.fire({
@@ -47,12 +49,23 @@ function UserDashboard() {
     });
   };
 
+  const handleSearch = async (searchQuery) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      dispatch(setToursByUser(response.data.tours));
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const fetchUserTours = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/tour/userDashboard/${userId}`);
+        const response = await axios.get(`http://localhost:5000/tour/userDashboard/${userId}?page=${currentPage}`);
         console.log(response.data, "rrrrrrrrrrrr");
-        dispatch(setToursByUser(response.data));
+        dispatch(setToursByUser(response.data.userTours));
+        setTotalPages(response.data.totalPages);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching user tours:', error);
@@ -62,7 +75,7 @@ function UserDashboard() {
     if (userId) {
       fetchUserTours();
     }
-  }, [userId, dispatch]);
+  }, [currentPage, userId, dispatch]);
 
   if (isLoading || loading) {
     return (
@@ -83,7 +96,7 @@ function UserDashboard() {
 
   return (
     <>
-      <Header />
+      <Header handleSearch={handleSearch}/>
       <div className='dashboard_container'>
         <h4 className='text-center'>Dashboard : {user?.name}</h4>
         <h6 className='text-center text-muted'>E-mail : {user?.email}</h6>
@@ -149,6 +162,36 @@ function UserDashboard() {
           )
         })}
       </div>
+      <nav aria-label='...'>
+        <MDBRow className='pagination-row'>
+          <MDBCol>
+            <MDBContainer>
+              <nav aria-label='...'>
+                <MDBPagination circle className='mb-0'>
+                  <MDBPaginationItem disabled={currentPage === 1}>
+                    <MDBPaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+                      Previous
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <MDBPaginationItem active={currentPage === page} key={page}>
+                      <MDBPaginationLink onClick={() => setCurrentPage(page)}>
+                        {page}
+                      </MDBPaginationLink>
+                    </MDBPaginationItem>
+                  ))}
+                  <MDBPaginationItem disabled={currentPage === totalPages}>
+                    <MDBPaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+                      Next
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                </MDBPagination>
+
+              </nav>
+            </MDBContainer>
+          </MDBCol>
+        </MDBRow>
+      </nav>
     </>
   )
 }

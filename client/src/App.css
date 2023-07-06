@@ -27,6 +27,7 @@
   display: flex !important;
   justify-content: center !important;
   width: 1100px !important;
+  
 }
 
 /* *************************************************************************** */
@@ -62,6 +63,18 @@
   justify-content: center !important;
 }
 
+.card-style {
+  margin : auto;
+  padding: 15px;
+  max-width: 1000px;
+  align-content: center;
+}
+
+.pagination-row {
+  margin-top: 50px !important;
+  margin-bottom: 20px;
+}
+
 .description {
   height: 100px !important;
 }
@@ -86,9 +99,32 @@
   font-size: 20px !important;
 }
 
+.date-picker-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  margin-top: 70px;
+  margin-bottom: 10px;
+}
+
+.smaller-input {
+  width: 150px; /* Adjust the width as per your preference */
+  margin-right: 10px; /* Adjust the spacing between the input boxes */
+}
+
 .tour-image {
   width: 45px !important;
   height: 45px !important;
+}
+
+.date_label{
+  font-weight: bold;
+  margin-right: 5px;
 }
 
 /* ************************************************************************** */
@@ -157,3 +193,13 @@
   margin: 0 auto;
   height: auto;
 }
+
+.sort-dropdown{
+  width: 250px;
+   text-align:start;
+}
+
+.option_value{
+  font-size: 18px;
+}
+

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTour, updateTour, setTours } from '../Redux/Features/tourSlice';
-import { MDBTable, MDBTableBody, MDBTableHead, MDBSpinner, MDBSwitch } from 'mdb-react-ui-kit';
+import { MDBCol, MDBPaginationItem, MDBRow, MDBSpinner, MDBPaginationLink, MDBPagination, MDBContainer } from 'mdb-react-ui-kit';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminHeader from '../Components/AdminHeader';
 import { setUser } from '../Redux/Features/adminSlice';
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
-import '../App.css'
+import '../App.css';
+
+
 
 
 function AdminHome() {
@@ -18,7 +20,11 @@ function AdminHome() {
   const [isLoading, setIsLoading] = useState(true);
   const admin = useSelector((state) => state.admin.user);
   const navigate = useNavigate();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -29,11 +35,59 @@ function AdminHome() {
     }
   }, [dispatch, navigate]);
 
+  const handleSearch = async (searchQuery) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      dispatch(setTours(response.data.tours));
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+  };
+
+  useEffect(() => {
+    console.log(startDate, "startDate")
+  }, [startDate])
+  useEffect(() => {
+    console.log(endDate, "endDate")
+  }, [endDate])
+
+  const handleEndDateChange = (event) => {
+    const selectedDate = new Date(event.target.value);
+    const currentDate = new Date();
+    if (selectedDate > currentDate) {
+      // Set the end date to the current date
+      setEndDate(currentDate.toISOString().split('T')[0]);
+    } else {
+      setEndDate(event.target.value);
+    }
+  };
+
+  const handleDateSearch = async () => {
+    try {
+      const queryParams = new URLSearchParams({
+        page: currentPage,
+        startDate: startDate,
+        endDate: endDate,
+      });
+      const response = await axios.get(`http://localhost:5000/tour/?${queryParams.toString()}`);
+      dispatch(setTours(response.data.tours));
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/tour/');
-        dispatch(setTours(response.data));
+        const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}`);
+        dispatch(setTours(response.data.tours));
+        setTotalPages(response.data.totalPages);
         setIsLoading(false);
       } catch (error) {
         console.error(error);
@@ -42,19 +96,17 @@ function AdminHome() {
     };
 
     fetchTourData();
-  }, [dispatch]);
-
+  }, [currentPage, dispatch]);
 
   if (isLoading || loading) {
     return (
       <>
-        <div className = "spinner">
+        <div className="spinner">
           <MDBSpinner grow size='big' />
         </div>
       </>
     );
   }
-
 
   const handleDeleteTour = (tourId) => {
     Swal.fire({
@@ -84,7 +136,6 @@ function AdminHome() {
     });
   };
 
-
   const excerpt = (str) => {
     if (str.length > 60) {
       str = str.substring(0, 45) + "...";
@@ -95,55 +146,119 @@ function AdminHome() {
   const imageUrl = `http://localhost:5000/uploads/`;
   return (
     <>
-      <AdminHeader />
+      <AdminHeader handleSearch={handleSearch} />
       <div className='mt-5'>
         {tours.length === 0 ? (
-          <h3>No data available</h3>
+          <MDBCol className='text-center'>
+            <div className="no-tour-container">
+              <h3 className="no-tour-text text-muted">No Tour Found</h3>
+              <img src="/notou.jpg" alt="No Tours Found" className="no-tour-image" />
+            </div>
+          </MDBCol>
         ) : (
-          <table className="table align-middle ps-5 pe-5  bg-white tour-table">
-            <thead className="bg-light">
-              <tr>
-                <th>Name</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Image</th>
-                <th>Listing</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tours.map((item, index) => (
-                <tr key={index} {...item}>
-                  <td>
-                    <p className="fw-bold mb-1">{item.name}</p>
-                  </td>
-                  <td>
-                    <p className="fw-normal mb-1">{item.title}</p>
-                  </td>
-                  <td>
-                    <p className="text-muted mb-0">{excerpt(item.description)}
-                      <Link to={`/adminhome/${item._id}`}>Read More</Link>
-                    </p>
-                  </td>
-                  <div>
-                    <img
-                      src={item.image}
-                      alt=""
-                      className="rounded-circle tour-image"
-                    />
-                  </div>
-                  <td>
-                    <button
-                      onClick={() => handleDeleteTour(item._id)}
-                      className='btn btn-danger' >
-                      Delete
-                    </button>
-                  </td>
+          <>
+            <MDBContainer>
+              <div className="date-picker-wrapper">
+                <div className="date-picker-container">
+                  <label className='date_label' htmlFor="startDate">From: </label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                    className="form-control smaller-input"
+                    placeholder="From"
+                  />
+                </div>
+                <div className="date-picker-container">
+                  <label htmlFor="endDate" className='date_label'>To:</label>
+                  <input
+                    type="date"
+                    id="endDate"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                    className="form-control smaller-input"
+                    placeholder="To"
+                  />
+                  <button onClick={handleDateSearch} className="btn btn-primary">Search</button>
+                </div>
+              </div>
+            </MDBContainer>
+            <table className="table align-middle ps-5 pe-5  bg-white tour-table">
+              <thead className="bg-light">
+                <tr>
+                  <th>Name</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Image</th>
+                  <th>Listing</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {tours.map((item, index) => (
+                  <tr key={index} {...item}>
+                    <td>
+                      <p className="fw-bold mb-1">{item.name}</p>
+                    </td>
+                    <td>
+                      <p className="fw-normal mb-1">{item.title}</p>
+                    </td>
+                    <td>
+                      <p className="text-muted mb-0">{excerpt(item.description)}
+                        <Link to={`/admin/${item._id}`}>Read More</Link>
+                      </p>
+                    </td>
+                    <div>
+                      <img
+                        src={item.image}
+                        alt=""
+                        className="rounded-circle tour-image"
+                      />
+                    </div>
+                    <td>
+                      <button
+                        onClick={() => handleDeleteTour(item._id)}
+                        className='btn btn-danger' >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
+      <nav aria-label='...'>
+        <MDBRow className='pagination-row'>
+          <MDBCol>
+            <MDBContainer>
+              <nav aria-label='...'>
+                <MDBPagination circle className='mb-0'>
+                  <MDBPaginationItem disabled={currentPage === 1}>
+                    <MDBPaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+                      Previous
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <MDBPaginationItem active={currentPage === page} key={page}>
+                      <MDBPaginationLink onClick={() => setCurrentPage(page)}>
+                        {page}
+                      </MDBPaginationLink>
+                    </MDBPaginationItem>
+                  ))}
+                  <MDBPaginationItem disabled={currentPage === totalPages}>
+                    <MDBPaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+                      Next
+                    </MDBPaginationLink>
+                  </MDBPaginationItem>
+                </MDBPagination>
+
+              </nav>
+            </MDBContainer>
+          </MDBCol>
+        </MDBRow>
+      </nav>
     </>
 
   );

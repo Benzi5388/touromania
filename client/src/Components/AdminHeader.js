@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDBSpinner, MDBBtn, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav} from 'mdb-react-ui-kit';
+import {MDBInputGroup, MDBInputGroupElement, MDBInputGroupText, MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav} from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, setUser } from '../Redux/Features/adminSlice';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,17 +7,22 @@ import '../App.css'
 
 
 
-function AdminHeader() {
+function AdminHeader({handleSearch}) {
     const [show, setShow] = useState(false)
     const dispatch = useDispatch();
     const admin = useSelector((state) => state.admin.user);
     const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleLogout = () =>{
       dispatch(setLogout())
     }
 
+    const handleSubmit = (e) => {
+      e.preventDefault(); // Prevents the default form submission
+      handleSearch(searchQuery);
+    };
     useEffect(() => {
       const admin = JSON.parse(localStorage.getItem('admin'));
       if (!admin) {
@@ -31,8 +36,22 @@ function AdminHeader() {
     return (
       <MDBNavbar fixed="top" expand="lg" className="mdbnavbar">
         <MDBContainer>
-          <MDBNavbarBrand className="mdbnavbar-brand" href="/">
+          <MDBNavbarBrand className="mdbnavbar-brand" >
             Touropedia
+            <form style={{ marginLeft: "10px" }}>
+            <MDBInputGroup>
+              <MDBInputGroupElement
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={(e) => e.preventDefault()}
+              />
+              <MDBInputGroupText>
+                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
+              </MDBInputGroupText>
+            </MDBInputGroup>
+          </form>
           </MDBNavbarBrand>
           <MDBNavbarToggler
             type="button"

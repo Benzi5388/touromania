@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav } from 'mdb-react-ui-kit';
+import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav, MDBInputGroup, MDBInputGroupText, MDBInputGroupElement } from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, saveUserData } from '../Redux/Features/authSlice';
-import  '../App.css';
+import '../App.css';
 
-function Header() {
+function Header({handleSearch}) {
   const [show, setShow] = useState(false)
   const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = () => {
     dispatch(setLogout())
   }
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevents the default form submission
+    handleSearch(searchQuery);
+  };
+
   useEffect(() => {
     // Fetch user data from the Redux store directly
     const userData = localStorage.getItem('userData');
@@ -20,11 +27,26 @@ function Header() {
   }, [dispatch]);
 
   const user = useSelector((state) => (state.auth.user))
+
   return (
-    <MDBNavbar className= "header-navbar" fixed="top" expand="lg">
+    <MDBNavbar className="header-navbar" fixed="top" expand="lg">
       <MDBContainer>
-        <MDBNavbarBrand className = "header-navbar-brand" href='/'>
+        <MDBNavbarBrand className="header-navbar-brand">
           Touropedia
+          <form style={{ marginLeft: "10px" }}>
+            <MDBInputGroup>
+              <MDBInputGroupElement
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={(e) => e.preventDefault()}
+              />
+              <MDBInputGroupText>
+                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
+              </MDBInputGroupText>
+            </MDBInputGroup>
+          </form>
         </MDBNavbarBrand>
         <MDBNavbarToggler
           type="button"
@@ -35,48 +57,48 @@ function Header() {
           <MDBIcon icon="bars" fas />
         </MDBNavbarToggler>
         <MDBCollapse show={show} navbar>
-          <MDBNavbarNav right fullwidth={false} className='mb-2 mb-lg-0 justify-content-end'>
-            {user?.id && (
-              <h5 className = "navbar-nav">Welcome : {user?.name} </h5>
-            )}
+          <MDBNavbarNav right fullwidth={false} className="mb-2 mb-lg-0 justify-content-end">
+            {user?.id && <h5 className="navbar-nav">Welcome: {user?.name}</h5>}
             <MDBNavbarItem>
-              <MDBNavbarLink href='/'>
-                <p className='header-text'>Home</p>
+              <MDBNavbarLink href="/">
+                <p className="header-text">Home</p>
               </MDBNavbarLink>
             </MDBNavbarItem>
             {user?.id && (
               <>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/addTour'>
-                    <p className='header-text'>Add Tour</p>
+                  <MDBNavbarLink href="/addTour">
+                    <p className="header-text">Add Tour</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
                 <MDBNavbarItem>
-                  <MDBNavbarLink href='/UserDashboard'>
-                    <p className='header-text'>Dashboard</p>
+                  <MDBNavbarLink href="/UserDashboard">
+                    <p className="header-text">Dashboard</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </>
             )}
             {user?.id ? (
-
               <MDBNavbarItem>
-                <MDBNavbarLink href='/login'>
-                  <p onClick={handleLogout} className='header-text'>Logout</p>
+                <MDBNavbarLink href="/login">
+                  <p onClick={handleLogout} className="header-text">
+                    Logout
+                  </p>
                 </MDBNavbarLink>
-              </MDBNavbarItem>) :
-              (
-                <MDBNavbarItem>
-                  <MDBNavbarLink href='/login'>
-                    <p className='header-text'>Login</p>
-                  </MDBNavbarLink>
-                </MDBNavbarItem>
-              )}
+              </MDBNavbarItem>
+            ) : (
+              <MDBNavbarItem>
+                <MDBNavbarLink href="/login">
+                  <p className="header-text">Login</p>
+                </MDBNavbarLink>
+              </MDBNavbarItem>
+            )}
+
           </MDBNavbarNav>
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>
-  )
-}
+  );
 
+}
 export default Header

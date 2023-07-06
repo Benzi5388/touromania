@@ -21,6 +21,7 @@ import VerifyOtp from './Pages/VerifyOtp';
 import SingleTour from './Pages/SingleTour';
 import UserDashboard from './Pages/UserDashboard';
 import EditTour from './Pages/EditTour';
+import Description from './Pages/Description';
 
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
           <Route path="/editTour/:id" element={<EditTour/>} />
           <Route path="/addTour" element={<AddTour />} />
           <Route path='/tour/:id' element={<SingleTour />} />
+          <Route path='/admin/:id' element={<Description />} />
           <Route path="/resendOTP" element={<ResendOTP />} />
           <Route path='/verifyOTP' element={<VerifyOtp />} />
           <Route path='/adminlogin' element={<AdminLogin />} />

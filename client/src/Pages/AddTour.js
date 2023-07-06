@@ -20,6 +20,8 @@ const { error, loading } = useSelector((state) => state.tour);
 const user = useSelector((state) => (state.auth.user))
  const dispatch = useDispatch();
  const navigate = useNavigate();
+ const [currentPage, setCurrentPage] = useState(1);
+ const [totalPages, setTotalPages] = useState(1);
 
  useEffect(() => {
   const user = localStorage.getItem('user');
@@ -59,6 +61,17 @@ navigate('/');
   setTag(tags.filter((tag) => tag !== deleteTag));
  }
 
+ const handleSearch = async (searchQuery) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+    dispatch(setTours(response.data.tours));
+    setTotalPages(response.data.totalPages);
+    navigate('/')
+  } catch (error) {
+    console.error(error);
+  }
+};
+
  const handleClear = () => {
   setTitle('');
   setDescription('');
@@ -67,7 +80,7 @@ navigate('/');
 };
   return (
     <>
-    <Header/>
+    <Header handleSearch={handleSearch}/>
     <div className='header-container'>
            <MDBCard alignment='center'>
              <h5>Add Tour</h5>

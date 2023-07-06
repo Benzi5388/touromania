@@ -17,6 +17,7 @@ const EditTour = () => {
     const [description, setDescription] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
     const [tags, setTag] = useState([]);
+    const [selectedTour, setSelectedTour] = useState(null);
     console.log(id, "uuuuuuuuuuu");
     const user = useSelector((state) => (state.auth.user))
     const dispatch = useDispatch();
@@ -68,6 +69,26 @@ const EditTour = () => {
         setTag([]);
         setVideoUrl('');
     };
+
+    // ...
+  
+    useEffect(() => {
+      // Fetch the selected tour based on the id
+      axios.get(`http://localhost:5000/tour/editTour/${id}`)
+        .then((response) => {
+          const tour = response.data
+          console.log(response.data, "hiiiiii");
+          // Set the state values with the existing values of the selected tour
+          setSelectedTour(tour);
+          setTitle(tour.title);
+          setDescription(tour.description);
+          setTag(tour.tags);
+          setVideoUrl(tour.videoUrl);
+        })
+        .catch(() => {
+          toast.error('Failed to fetch tour');
+        });
+    }, [id]);
     return (
         <>
             <Header />
