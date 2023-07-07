@@ -1,16 +1,21 @@
 import express  from "express";
 
 const router = express.Router();
+import  authh from '../Middleware/authh.js'
 
-import { signin } from '../Controllers/Admin.js';
+import { logout, signin } from '../Controllers/Admin.js';
 import { deleteUser, getUsers } from "../Controllers/User.js";
-import { getSingleTour } from "../Controllers/Tour.js";
+import { getSingleTour, getTour } from "../Controllers/Tour.js";
 
 
 router.post('/adminlogin', signin);
-router.get('/users', getUsers)
-router.get('/:id', deleteUser);
-router.get('/:id', getSingleTour)
+
+//PROTECTED ROUTES
+router.get('/',authh, getTour);
+router.get('/users',authh,  getUsers)
+router.get('/user/:id', authh, deleteUser);
+router.get('/tours/:id',authh, getSingleTour)
+router.get('/logout', authh, logout)
 
 
 export default router;

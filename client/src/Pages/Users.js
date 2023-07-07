@@ -33,7 +33,12 @@ function Users() {
     // Fetch users
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/admin/users?page=${currentPage}`); // Replace with your actual API endpoint
+          const admin = localStorage.getItem('admintoken');
+        const response = await axios.get(`http://localhost:5000/admin/users/?page=${currentPage}`, {
+          headers: {
+            'Authorization': `Bearer ${admin}`
+          }}); 
+        console.log(response.data);
         const user = response.data.users; // Assuming the response contains an array of users
         console.log(user, "userdata");
         dispatch(saveUserData(user)); // Dispatch an action to save the users in Redux store
@@ -68,7 +73,7 @@ function Users() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.get(`http://localhost:5000/admin/${item_id}`);
+          await axios.get(`http://localhost:5000/admin/user/${item_id}`);
           dispatch(updateUser(item_id)); // Remove the deleted user from Redux store
 
           Swal.fire(

@@ -6,14 +6,13 @@ import { createTour, deleteTour, getSingleTour, getTour, getToursByUser, updateT
 import { upload } from "../Helpers/multer.js";
 
 
-
-router.post('/', upload.single('file'), createTour);
-router.post('/editTour/:id', upload.single('file'),updateTour)
-router.get('/',getTour);
-router.get('/:id', deleteTour);
-router.get('/userDashboard/:id', getToursByUser)
-router.get('/editTour/:id', getSingleTour)
-
+//PROTECTED ROUTES
+router.get('/',auth,getTour);
+router.post('/addtour',auth, upload.single('file'), createTour);
+router.post('/editTour/:id',auth, upload.single('file'),updateTour)
+router.get('/:id',auth, deleteTour);
+router.get('/userDashboard/:id',auth, getToursByUser)
+router.get('/editTour/:id',auth, getSingleTour)
 
 
 export default router;

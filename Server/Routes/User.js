@@ -6,7 +6,6 @@ import { forgotPassword, getUsers, googleSignIn, regenerateAndSendOTP, signin, s
 import { getSingleTour, updateTour } from "../Controllers/Tour.js";
 
 router.post('/signup', signup);
-router.get('/profile', getUsers)
 router.post('/signin',signin);
 router.post('/gooleSignIn', googleSignIn);
 router.post('/resendOTP', regenerateAndSendOTP);
@@ -15,6 +14,9 @@ router.post('/otp', verify);
 router.post('/forgotPassword', forgotPassword);
 router.post('/resetPassword', resetPassword)
 router.get('/:id', getSingleTour)
+
+// router.get('/profile', getUsers)
+
 
 
 

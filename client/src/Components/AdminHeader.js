@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, setUser } from '../Redux/Features/adminSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css'
+import axios from 'axios'
 
 
 
@@ -15,8 +16,15 @@ function AdminHeader({handleSearch}) {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
 
-    const handleLogout = () =>{
-      dispatch(setLogout())
+    const handleLogout = async() =>{
+      try {
+        await axios.get('http://localhost:5000/admin/logout'); // Call the logout route on the server
+        // Perform any additional logout actions (e.g., clear local storage, redirect)
+        dispatch(setLogout())
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+      
     }
 
     const handleSubmit = (e) => {
@@ -37,8 +45,8 @@ function AdminHeader({handleSearch}) {
       <MDBNavbar fixed="top" expand="lg" className="mdbnavbar">
         <MDBContainer>
           <MDBNavbarBrand className="mdbnavbar-brand" >
-            Touropedia
-            <form style={{ marginLeft: "10px" }}>
+            Touromania
+            {/* <form style={{ marginLeft: "10px" }}>
             <MDBInputGroup>
               <MDBInputGroupElement
                 type="text"
@@ -51,7 +59,7 @@ function AdminHeader({handleSearch}) {
                 <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
               </MDBInputGroupText>
             </MDBInputGroup>
-          </form>
+          </form> */}
           </MDBNavbarBrand>
           <MDBNavbarToggler
             type="button"
@@ -85,6 +93,19 @@ function AdminHeader({handleSearch}) {
                 </Link>
               </MDBNavbarItem>
             </MDBNavbarNav>
+            <form className='d-flex input-group w-auto'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Search Tour'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={(e) => e.preventDefault()}
+            />
+            <MDBInputGroupText>
+                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
+              </MDBInputGroupText>
+          </form>
           </MDBCollapse>
         </MDBContainer>
       </MDBNavbar>

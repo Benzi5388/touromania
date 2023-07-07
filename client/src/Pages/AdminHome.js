@@ -9,6 +9,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
 import '../App.css';
+import {API} from '../Redux/api'
 
 
 
@@ -37,7 +38,7 @@ function AdminHome() {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      const response = await API.get(`/admin/?page=${currentPage}&search=${searchQuery}`);
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
     } catch (error) {

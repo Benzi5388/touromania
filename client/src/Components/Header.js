@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, saveUserData } from '../Redux/Features/authSlice';
 import '../App.css';
 
-function Header({handleSearch}) {
+function Header({ handleSearch }) {
   const [show, setShow] = useState(false)
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,8 +32,8 @@ function Header({handleSearch}) {
     <MDBNavbar className="header-navbar" fixed="top" expand="lg">
       <MDBContainer>
         <MDBNavbarBrand className="header-navbar-brand">
-          Touropedia
-          <form style={{ marginLeft: "10px" }}>
+          Touromania
+          {/* <form style={{ marginLeft: "10px" }}>
             <MDBInputGroup>
               <MDBInputGroupElement
                 type="text"
@@ -46,7 +46,7 @@ function Header({handleSearch}) {
                 <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
               </MDBInputGroupText>
             </MDBInputGroup>
-          </form>
+          </form> */}
         </MDBNavbarBrand>
         <MDBNavbarToggler
           type="button"
@@ -93,8 +93,20 @@ function Header({handleSearch}) {
                 </MDBNavbarLink>
               </MDBNavbarItem>
             )}
-
           </MDBNavbarNav>
+          <form className='d-flex input-group w-auto'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Search Tour'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={(e) => e.preventDefault()}
+            />
+            <MDBInputGroupText>
+                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
+              </MDBInputGroupText>
+          </form>
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>

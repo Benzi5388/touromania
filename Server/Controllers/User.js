@@ -17,9 +17,7 @@ export const signin = async (req, res) => {
     const isPasswordCorrect = await bcrypt.compare(password, oldUser.password)
     if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid Credentials" });
 
-    const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
-      expiresIn: '1hr'
-    })
+    const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret)
     
     const userData = {
       email: oldUser.email,
@@ -88,9 +86,7 @@ export const signup = async (req, res) => {
 
       const token = jwt.sign(
         { email: result.email, id: result._id, otp: OTP },
-        secret,
-        { expiresIn: '1hr' }
-      );
+        secret);
       console.log(token, "token from sign in ");
       res.status(201).cookie('user', token, {
         httpOnly: true,
@@ -193,9 +189,7 @@ export const resetPassword = async (req, res) => {
     // Update the token with the new OTP
     const token = jwt.sign(
       { email: oldUser.email, id: oldUser._id, otp: updatedOTP },
-      secret,
-      { expiresIn: '30' }
-    );
+      secret);
 
     console.log(token, "token");
     res.status(200).json({ result: oldUser, token });

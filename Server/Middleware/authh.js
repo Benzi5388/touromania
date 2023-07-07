@@ -2,17 +2,17 @@ import jwt from 'jsonwebtoken';
 
 const secret = 'test';
 
-const auth = async (req, res, next) => {
+const authh = async (req, res, next) => {
   try {
-    const token = req.cookies.user;
+    const token = req.cookies.admin;
     console.log('Token:', token);
     if (token) {
       const decodedData = jwt.verify(token, secret, { ignoreExpiration: true });
-      req.userId = decodedData?.id;
-      console.log(req.userId, "auth middleware");
+      req.adminId = decodedData?.email;
+      console.log(req.adminId, "auth middleware");
     }
 
-    if (!req.userId) {
+    if (!req.adminId) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
@@ -23,4 +23,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-export default auth;
+export default authh;

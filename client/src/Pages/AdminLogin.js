@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { setUser } from '../Redux/Features/adminSlice';
 import '../App.css'
+import axios from 'axios'
 
 const initialState = {
     email : "",
@@ -24,14 +25,19 @@ function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (email && password) {
-          // Simulate async login request
-          setTimeout(() => {
-            const user = { email }; // Replace with actual user data
-    
-            dispatch(setUser(user));
-            toast.success('Logged in successfully!');
-            navigate('/adminhome');
-          }, 2000);
+          // Make HTTP request to authenticate the user and receive the cookie
+          axios
+            .post('http://localhost:5000/admin/adminlogin', { email, password }, { withCredentials: true })
+            .then((response) => {
+              const user = { email };
+              dispatch(setUser(user));
+              toast.success('Logged in successfully!');
+              navigate('/adminhome');
+            })
+            .catch((error) => {
+              console.error(error);
+              toast.error('Something went wrong');
+            });
         }
       };
     const onInputChange = (e)=>{

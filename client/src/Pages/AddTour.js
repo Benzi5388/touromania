@@ -39,7 +39,7 @@ const user = useSelector((state) => (state.auth.user))
    if(title && description){
      const updatedTourData = {title,description,file, tags, videoUrl, name: user?.name, creator : user?.id}
      console.log(user, "user");
-     axios.post("http://localhost:5000/tour", updatedTourData,{
+     axios.post("http://localhost:5000/tour/addtour", updatedTourData,{
       headers: {
           'content-type': 'multipart/form-data'
       }

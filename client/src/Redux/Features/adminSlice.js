@@ -20,6 +20,10 @@ const adminSlice = createSlice({
       state.loading = false;
       state.error = null;
       localStorage.removeItem('admin');
+      document.cookie = 'admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+
+
     },
   },
   extraReducers: {},

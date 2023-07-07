@@ -73,6 +73,11 @@
 .pagination-row {
   margin-top: 50px !important;
   margin-bottom: 20px;
+  
+}
+
+.pagination-row.row{
+  --mdb-gutter-x: 0rem;
 }
 
 .description {
