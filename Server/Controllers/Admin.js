@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import TourModel from '../Models/Tour.js';
+import UserModel from '../Models/User.js';
 const secret = 'test';
 
 export const signin = async (req, res) => {
@@ -37,3 +39,26 @@ export const signin = async (req, res) => {
     }
   };
   
+  // Fetch the count of tours
+export const getTourCount = async (req, res) => {
+  try {
+    const tourCount = await TourModel.countDocuments();
+    console.log(tourCount, "nnnnnnnnnn");
+    res.status(201).json({ count: tourCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching tour count' });
+  }
+};
+
+// Fetch the count of users
+export const getUserCount = async (req, res) => {
+  try {
+    const userCount = await UserModel.countDocuments();
+    console.log(userCount, "usercount");
+    res.status(201).json({ count: userCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching user count' });
+  }
+};

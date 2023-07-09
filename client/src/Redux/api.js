@@ -1,8 +1,33 @@
 import axios from 'axios';
 
-export const API = axios.create({baseURL : 'http://localhost:5000'});
+const instance = axios.create({
+    baseURL: 'http://localhost:5000',
+  });
 
-
+  const tokenCache = {
+    token: null, // Initialize token as null
+    setToken(token) {
+      this.token = token; // Set the token in the cache
+    },
+    getToken() {
+      return this.token; // Get the token from the cache
+    },
+  };
+// Add an interceptor to include the authorization token in the request headers
+instance.interceptors.request.use(
+    (config) => {
+      const adminToken = tokenCache.getAdminToken(); // Get the admin token from the cache
+      if (adminToken) {
+        config.headers.Authorization = `Bearer ${adminToken}`; // Include the admin token in the request headers
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  
+  export const API = instance;
 
 // API.interceptors.request.use((req)=>{
 //     if(localStorage.getItem("profile")){

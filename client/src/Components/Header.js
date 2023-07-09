@@ -3,14 +3,22 @@ import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDB
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, saveUserData } from '../Redux/Features/authSlice';
 import '../App.css';
+import axios from 'axios'
 
 function Header({ handleSearch }) {
   const [show, setShow] = useState(false)
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleLogout = () => {
-    dispatch(setLogout())
+  const handleLogout = async() =>{
+    try {
+      await axios.post('http://localhost:5000/users/logout'); // Call the logout route on the server
+      // Perform any additional logout actions (e.g., clear local storage, redirect)
+      dispatch(setLogout())
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    
   }
 
   const handleSubmit = (e) => {
@@ -33,27 +41,12 @@ function Header({ handleSearch }) {
       <MDBContainer>
         <MDBNavbarBrand className="header-navbar-brand">
           Touromania
-          {/* <form style={{ marginLeft: "10px" }}>
-            <MDBInputGroup>
-              <MDBInputGroupElement
-                type="text"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={(e) => e.preventDefault()}
-              />
-              <MDBInputGroupText>
-                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
-              </MDBInputGroupText>
-            </MDBInputGroup>
-          </form> */}
         </MDBNavbarBrand>
         <MDBNavbarToggler
           type="button"
           aria-expanded="false"
           aria-label="Toggle navigation"
-          onClick={() => setShow(!show)}
-        >
+          onClick={() => setShow(!show)} >
           <MDBIcon icon="bars" fas />
         </MDBNavbarToggler>
         <MDBCollapse show={show} navbar>
@@ -74,6 +67,11 @@ function Header({ handleSearch }) {
                 <MDBNavbarItem>
                   <MDBNavbarLink href="/UserDashboard">
                     <p className="header-text">Dashboard</p>
+                  </MDBNavbarLink>
+                </MDBNavbarItem>
+                <MDBNavbarItem>
+                  <MDBNavbarLink href="/chat">
+                    <p className="header-text">Chat</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
               </>

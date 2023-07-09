@@ -46,20 +46,6 @@ function AdminHeader({handleSearch}) {
         <MDBContainer>
           <MDBNavbarBrand className="mdbnavbar-brand" >
             Touromania
-            {/* <form style={{ marginLeft: "10px" }}>
-            <MDBInputGroup>
-              <MDBInputGroupElement
-                type="text"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={(e) => e.preventDefault()}
-              />
-              <MDBInputGroupText>
-                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
-              </MDBInputGroupText>
-            </MDBInputGroup>
-          </form> */}
           </MDBNavbarBrand>
           <MDBNavbarToggler
             type="button"
@@ -71,8 +57,15 @@ function AdminHeader({handleSearch}) {
           </MDBNavbarToggler>
           <MDBCollapse show={show} navbar>
             <MDBNavbarNav right fullwidth={false} className="mb-2 mb-lg-0 justify-content-end">
+            <MDBNavbarItem>
+                <Link to="/AdminDashboard">
+                <MDBNavbarLink >
+                  <p className="header-text">Dashboard</p>
+                </MDBNavbarLink>
+                </Link>
+              </MDBNavbarItem>
               <MDBNavbarItem>
-                <MDBNavbarLink href="/adminhome">
+                <MDBNavbarLink href="/tours">
                   <p className="header-text">Tours</p>
                 </MDBNavbarLink>
               </MDBNavbarItem>

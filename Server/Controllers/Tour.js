@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 export const createTour = async (req, res) => {
   // const image = req.file.filename;
-  const { title, description, tags, videoUrl, name, creator } = req.body;
+  const { title, location, description, tags, videoUrl, name, creator } = req.body;
   try {
     const image = [req.file.path]; // Assuming the uploaded image is stored in req.file
 
@@ -14,6 +14,7 @@ export const createTour = async (req, res) => {
     // const imageUrl = uploadedImage.secure_url
     const newTour = new TourModel({
       title,
+      location,
       description,
       tags,
       image: uploadedImage[0].url,
@@ -57,7 +58,8 @@ export const getTour = async (req, res) => {
       searchFilters.$or = [
         { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
         { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
-        { name: { $regex: `^${searchQuery}`, $options: 'i' } }
+        { name: { $regex: `^${searchQuery}`, $options: 'i' } },
+        { location: { $regex: `^${searchQuery}`, $options: 'i' } }
       ];
     }
 
@@ -91,7 +93,6 @@ export const getTour = async (req, res) => {
 
 export const getSingleTour = async (req, res) => {
   const id = req.params.id
-  console.log(id, "55555555555555555");
   try {
     const tour = await TourModel.findById(id)
     console.log(tour, "trip");
@@ -120,8 +121,7 @@ export const deleteTour = async (req, res) => {
 };
 
 export const updateTour = async (req, res) => {
-  const { title, description, tags, videoUrl, name, creator } = (req.body);
-  console.log(req.body, " bbbbbbbbb");
+  const { title, location, description, tags, videoUrl, name, creator } = (req.body);
   try {
     let image;
     if (req.file) {
@@ -136,6 +136,7 @@ export const updateTour = async (req, res) => {
     }
 
     tour.title = title;
+    tour.location = location;
     tour.description = description;
     tour.tags = tags;
     if (image) {
@@ -192,3 +193,38 @@ export const getToursByUser = async (req, res) => {
     res.status(404).json({ message: "Something went wrong" });
   }
 };
+
+export const likeTour = async (req, res) => {
+  const id = req.params.id;
+  console.log(id, "liesss");
+  console.log("req.userId:", req.userId);
+
+  try {
+    if (!req.userId) {
+      return res.json("User is not authorized");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ message: "User doesn't exist" });
+    }
+
+    const tour = await TourModel.findById(id);
+    console.log("tour.likes:", tour.likes);
+
+    const index = tour.likes.findIndex((likeId) => likeId === String(req.userId));
+    console.log("index:", index);
+
+    if (index === -1) {
+      tour.likes.push(req.userId);
+    } else {
+      tour.likes = tour.likes.filter((likeId) => likeId !== String(req.userId));
+    }
+
+    const updatedTour = await TourModel.findByIdAndUpdate(id, tour, { new: true });
+
+    res.status(200).json(updatedTour);
+  } catch (err) {
+    res.status(404).json({ message: "Something went wrong" });
+  }
+};
+

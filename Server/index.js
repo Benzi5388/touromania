@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import userRouter from './Routes/User.js';
 import tourRouter from './Routes/tour.js';
 import adminRouter from './Routes/Admin.js';
+import chatRouter from './Routes/ChatRoute.js'
+import MessageRouter from './Routes/MessageRouter.js'
 import dotenv from 'dotenv';
 import path from 'path'
 import cookieParser from 'cookie-parser';
@@ -56,6 +58,8 @@ app.use(cors(corsOptions));
 app.use('/users', userRouter);
 app.use('/tour', tourRouter);
 app.use('/admin', adminRouter);
+app.use('/chat', chatRouter);
+app.use('/message',MessageRouter )
 
 
 mongoose.set("strictQuery", false)

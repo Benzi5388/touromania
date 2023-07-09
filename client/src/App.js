@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import { register, saveUserData } from './Redux/Features/authSlice';
 import AddTour from './Pages/AddTour';
 import AdminLogin from './Pages/AdminLogin'
-import AdminHome from './Pages/AdminHome';
+import Tours from './Pages/Tours';
 import Users from './Pages/Users';
 import axios from 'axios';
 import ResendOTP from './Pages/ResendOTP'
@@ -22,6 +22,8 @@ import SingleTour from './Pages/SingleTour';
 import UserDashboard from './Pages/UserDashboard';
 import EditTour from './Pages/EditTour';
 import Description from './Pages/Description';
+import AdminDashboard from './Pages/AdminDashboard';
+import Chat from './Pages/Chat/Chat';
 
 
 function App() {
@@ -63,10 +65,12 @@ function App() {
           <Route path="/resendOTP" element={<ResendOTP />} />
           <Route path='/verifyOTP' element={<VerifyOtp />} />
           <Route path='/adminlogin' element={<AdminLogin />} />
-          <Route path='/adminhome' element={<AdminHome />} />
+          <Route path='/tours' element={<Tours />} />
+          <Route path='/AdminDashboard' element={<AdminDashboard/>} />
           <Route path="/users" element={<Users />} />
-          <Route path='/adminhome/:id' element={<AdminHome />} />
+          <Route path='/tours/:id' element={<Tours />} />
           <Route path='/UserDashboard' element={<UserDashboard />} />
+          <Route path='/chat' element={<Chat/>} />
 
 
         </Routes>

@@ -64,7 +64,7 @@ function Description() {
     <>
       <AdminHeader handleSearch={handleSearch}/>
       <MDBContainer>
-        <MDBCard className='mb-3 mt-5'>
+      <MDBCard className='mb-3 mt-5'>
           <MDBCardImage
             position='top'
             style={{ width: "100%", maxHeight: "600px" }}
@@ -72,7 +72,9 @@ function Description() {
             alt={selectedTour?.title}
           />
           <MDBCardBody>
-            <h3>{selectedTour?.title}</h3>
+            <div className="text-center"> {/* Add this div with text-center class */}
+              <h3>{selectedTour?.title}</h3>
+            </div>
             <span>
               <p className='text-start tourName'>Created By : {selectedTour?.name}</p>
             </span>
@@ -86,9 +88,27 @@ function Description() {
               <span className="calendar-icon">
                 <FaCalendarAlt />
               </span>
+              &nbsp; {/* Add a non-breaking space */}
               <small className='text-muted'>
                 {moment(selectedTour?.createdAt).fromNow()}
               </small>
+              <br />
+              <div style={{ marginTop: '10px' }}>
+                {selectedTour?.location && (
+                  <span className='text-start bold-text'>
+                    <MDBIcon icon='map-marker-alt' className='me-1' size='2x' />
+                    {selectedTour?.location}
+                  </span>
+                )}
+              </div>
+              <br />
+              <div>
+                {selectedTour?.videoUrl && (
+                  <a href={selectedTour?.videoUrl} target="_blank" rel="noopener noreferrer">
+                    Watch Video
+                  </a>
+                )}
+              </div>
             </MDBCardText>
             <MDBCardText className='lead mb-0 text-start'>{selectedTour?.description}
             </MDBCardText>

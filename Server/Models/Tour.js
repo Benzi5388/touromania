@@ -5,6 +5,10 @@ const tourSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    location: {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
         required: true
@@ -18,9 +22,9 @@ const tourSchema = mongoose.Schema({
         type: String
     },
     videoUrl: String,
-    likeCount: {
-        type: Number,
-        default: 0
+    likes: {
+        type: [String],
+        default: []
     },
     listed: {
         type: Boolean,

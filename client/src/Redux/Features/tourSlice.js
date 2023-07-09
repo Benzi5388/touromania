@@ -5,12 +5,14 @@ const storedTours = localStorage.getItem('tours');
 
 const tourSlice = createSlice({
   name: 'tour',
-  initialState : {
+  initialState: {
     tours: storedTours ? JSON.parse(storedTours) : [],
     loading: false,
     error: null,
     selectedTour: null, // Add selectedTour property
-    usertours:null
+    usertours: null,
+    newTourState: null,
+    likedTourIds: []
   },
   reducers: {
     setTours: (state, action) => {
@@ -41,10 +43,20 @@ const tourSlice = createSlice({
       state.loading = false;
       state.error = null;
       localStorage.setItem('usertours', JSON.stringify(action.payload));
-    }
+    },
+    setNewTourState: (state, action) => {
+      const { tourId, updatedTour } = action.payload;
+      const existingTour = state.tours.find((tour) => tour._id === tourId);
+      if (existingTour) {
+        existingTour.likes = updatedTour.likes; // Update the like count in the existingTour
+      }
+    },
+    setLikedTourIds: (state, action) => {
+      state.likedTourIds = action.payload;
+    },
   },
 });
 
-export const { setTours, getTour, updateTour, setTour, setToursByUser } = tourSlice.actions;
+export const { setTours, getTour, updateTour, setTour, setToursByUser, setNewTourState, setLikedTourIds } = tourSlice.actions;
 
 export default tourSlice.reducer;

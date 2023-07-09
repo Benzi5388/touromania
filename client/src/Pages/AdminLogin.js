@@ -32,7 +32,7 @@ function Login() {
               const user = { email };
               dispatch(setUser(user));
               toast.success('Logged in successfully!');
-              navigate('/adminhome');
+              navigate('/AdminDashboard');
             })
             .catch((error) => {
               console.error(error);

@@ -8,8 +8,9 @@ import axios from 'axios';
 import { setTours } from '../Redux/Features/tourSlice';
 import { setTour } from '../Redux/Features/tourSlice';
 import Header from '../Components/Header';
-import {useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../App.css';
+import DisqusThread from '../Components/disqus';
 
 function SingleTour() {
   const dispatch = useDispatch()
@@ -18,9 +19,7 @@ function SingleTour() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  console.log(selectedTour, "hhhhhhhhhh")
   const { id } = useParams();
-  console.log(id, "444444444444");
   const [isLoading, setIsLoading] = useState(true);
 
   const handleSearch = async (searchQuery) => {
@@ -61,7 +60,7 @@ function SingleTour() {
 
   return (
     <>
-      <Header handleSearch={handleSearch}/>
+      <Header handleSearch={handleSearch} />
       <MDBContainer>
         <MDBCard className='mb-3 mt-5'>
           <MDBCardImage
@@ -71,7 +70,9 @@ function SingleTour() {
             alt={selectedTour?.title}
           />
           <MDBCardBody>
-            <h3>{selectedTour?.title}</h3>
+            <div className="text-center"> {/* Add this div with text-center class */}
+              <h3>{selectedTour?.title}</h3>
+            </div>
             <span>
               <p className='text-start tourName'>Created By : {selectedTour?.name}</p>
             </span>
@@ -85,14 +86,33 @@ function SingleTour() {
               <span className="calendar-icon">
                 <FaCalendarAlt />
               </span>
+              &nbsp; {/* Add a non-breaking space */}
               <small className='text-muted'>
                 {moment(selectedTour?.createdAt).fromNow()}
               </small>
+              <br />
+              <div style={{ marginTop: '10px' }}>
+                {selectedTour?.location && (
+                  <span className='text-start bold-text'>
+                    <MDBIcon icon='map-marker-alt' className='me-1' size='2x' />
+                    {selectedTour?.location}
+                  </span>
+                )}
+              </div>
+              <br />
+              <div>
+                {selectedTour?.videoUrl && (
+                  <a href={selectedTour?.videoUrl} target="_blank" rel="noopener noreferrer">
+                    Watch Video
+                  </a>
+                )}
+              </div>
             </MDBCardText>
             <MDBCardText className='lead mb-0 text-start'>{selectedTour?.description}
             </MDBCardText>
           </MDBCardBody>
         </MDBCard>
+        <DisqusThread id={id} title={selectedTour.title} path={`/tour/${id}`} />
       </MDBContainer>
     </>
   )

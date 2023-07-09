@@ -2,7 +2,7 @@ import express  from "express";
 
 const router = express.Router();
 
-import { forgotPassword, getUsers, googleSignIn, regenerateAndSendOTP, signin, signup, verify, resetPassword } from '../Controllers/User.js';
+import { forgotPassword, getUsers, googleSignIn, regenerateAndSendOTP, signin, signup, verify, resetPassword, logOut } from '../Controllers/User.js';
 import { getSingleTour, updateTour } from "../Controllers/Tour.js";
 
 router.post('/signup', signup);
@@ -14,6 +14,7 @@ router.post('/otp', verify);
 router.post('/forgotPassword', forgotPassword);
 router.post('/resetPassword', resetPassword)
 router.get('/:id', getSingleTour)
+router.post('/logout', logOut)
 
 // router.get('/profile', getUsers)
 

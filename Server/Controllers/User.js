@@ -235,3 +235,19 @@ export const googleSignIn = async (req, res) => {
   }
 }
 
+export const logOut = (req, res) => {
+  try {
+    // Clear the user token cookie
+    res.cookie('user', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      expires: new Date(0),
+    });
+  
+    res.status(200).json({ message: 'Logout successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
