@@ -19,7 +19,7 @@ function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortOption, setSortOption] = useState('recent');
 
-
+console.log(user, "home page user");
   useEffect(() => {
     const fetchTourData = async () => {
       try {
@@ -72,9 +72,9 @@ function Home() {
         <MDBRow className='mt-5'>
           {tours.length === 0 ? (
             <MDBCol className='text-center'>
-              <div className="no-tour-container">
+              <div className="no-tour-container flex">
                 <h3 className="no-tour-text text-muted">No Tour Found</h3>
-                <img src="/notou.jpg" alt="No Tours Found" className="no-tour-image" />
+                <img src="/notou.jpg" alt="No Tours Found" className="no-tour-image img-fluid align-self-center" />
               </div>
             </MDBCol>
           ) : (

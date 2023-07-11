@@ -1,33 +1,33 @@
 import axios from 'axios';
 
-const instance = axios.create({
-    baseURL: 'http://localhost:5000',
-  });
+// const instance = axios.create({
+//     baseURL: 'http://localhost:5000',
+//   });
 
-  const tokenCache = {
-    token: null, // Initialize token as null
-    setToken(token) {
-      this.token = token; // Set the token in the cache
-    },
-    getToken() {
-      return this.token; // Get the token from the cache
-    },
-  };
-// Add an interceptor to include the authorization token in the request headers
-instance.interceptors.request.use(
-    (config) => {
-      const adminToken = tokenCache.getAdminToken(); // Get the admin token from the cache
-      if (adminToken) {
-        config.headers.Authorization = `Bearer ${adminToken}`; // Include the admin token in the request headers
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
+//   const tokenCache = {
+//     token: null, // Initialize token as null
+//     setToken(token) {
+//       this.token = token; // Set the token in the cache
+//     },
+//     getToken() {
+//       return this.token; // Get the token from the cache
+//     },
+//   };
+// // Add an interceptor to include the authorization token in the request headers
+// instance.interceptors.request.use(
+//     (config) => {
+//       const adminToken = tokenCache.getAdminToken(); // Get the admin token from the cache
+//       if (adminToken) {
+//         config.headers.Authorization = `Bearer ${adminToken}`; // Include the admin token in the request headers
+//       }
+//       return config;
+//     },
+//     (error) => {
+//       return Promise.reject(error);
+//     }
+//   );
   
-  export const API = instance;
+//   export const API = instance;
 
 // API.interceptors.request.use((req)=>{
 //     if(localStorage.getItem("profile")){
@@ -55,3 +55,24 @@ instance.interceptors.request.use(
 
 
 // export const adminlogin = (FormData) => API.post('/admin/adminlogin', FormData);
+
+// USER REQUEST
+
+const API = axios.create({
+      baseURL: 'http://localhost:5000',
+    });
+
+export const getUser = (userId) => API.get(`chat/user/${userId}`);
+
+// CHAT API
+export const createChat = (data) => API.post('/chat/', data);
+
+export const userChats = (id) => API.get(`/chat/${id}`);
+
+export const findChat = (firstId, secondId) => API.get(`/chat/find/${firstId}/${secondId}`);
+
+//MESSAGE API
+
+export const getMessages = (id) => API.get(`/message/${id}`);
+
+export const addMessage = (data) => API.post('/message/', data);

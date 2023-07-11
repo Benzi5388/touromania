@@ -82,6 +82,12 @@ function Login() {
   //         console.log('Google login error:', error);
   //     }
   // };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/'); // Navigate to the home route
+    }
+  }, [user, navigate]);
     
   return (
     
