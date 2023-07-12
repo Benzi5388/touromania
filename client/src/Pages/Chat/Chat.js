@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { userChats } from "../../Redux/api";
 import { io } from "socket.io-client";
 import Header from "../../Components/Header";
+import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
 
 const Chat = () => {
   const socket = useRef();
@@ -20,6 +21,7 @@ const Chat = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [sendMessage, setSendMessage] = useState(null);
   const [receivedMessage, setReceivedMessage] = useState(null);
+  const[users, setUsers] = useState([])
 
  useEffect(() => {
   //  console.log("HELLOOOOO "+onlineUsers, currentChat, sendMessage, receivedMessage);
@@ -32,7 +34,6 @@ const Chat = () => {
     const getChats = async () => {
       try {
         const mainUser = await JSON.parse(localStorage.getItem('user'));
-        console.log(mainUser, "Maindkksjdksjdkjskd")
         const { data } = await userChats(mainUser.id);
 
         setChats(data);
@@ -44,11 +45,24 @@ const Chat = () => {
     getChats();
   }, []);
 
+  
   useEffect(() => {
     // console.log("Chats from outside",chats);
   }, [chats]);
   
-
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const response = await getUsers();
+        console.log(response.data, "all usersssssss");
+        setUsers(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUsers();
+  }, []);
+  
   // Connect to Socket.io
   useEffect(() => {
     socket.current = io("ws://localhost:8800");
@@ -97,8 +111,17 @@ const Chat = () => {
     <div className="Chat">
       {/* Left Side */}
       <div className="Left-side-chat">
+      
         {/* <LogoSearch /> */}
         <div className="Chat-container">
+        <span><MDBDropdown group>
+        <MDBDropdownToggle color='info'>Users</MDBDropdownToggle>
+        <MDBDropdownMenu>
+                  {users.map((user) => (
+                    <MDBDropdownItem key={user.id}>{user.name}</MDBDropdownItem>
+                  ))}
+                </MDBDropdownMenu>
+      </MDBDropdown></span>
           <h2>Chats</h2>
           <div className="Chat-list">
             {chats.map((chat) => (
@@ -131,8 +154,9 @@ const Chat = () => {
           setSendMessage={setSendMessage}
           receivedMessage={receivedMessage}
         />}
-      </div>
+      </div>   
     </div>
+    
     </>
   );
 };

@@ -63,6 +63,7 @@ const API = axios.create({
     });
 
 export const getUser = (userId) => API.get(`chat/user/${userId}`);
+export const getUsers = () => API.get(`chat/allusers/`);
 
 // CHAT API
 export const createChat = (data) => API.post('/chat/', data);

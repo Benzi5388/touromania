@@ -4,11 +4,12 @@ import { addMessage, getMessages } from "../Redux/api";
 import { getUser } from "../Redux/api";
 import "./ChatBox.css";
 import { format } from "timeago.js";
-import InputEmoji from 'react-input-emoji'
+import { FaPaperPlane } from "react-icons/fa";
+
 
 const ChatBox = (props) => {
     console.log(props)
-    const { chats, currentUser, setSendMessage, receivedMessage } =props;
+    const { chats, currentUser, setSendMessage, receivedMessage } = props;
 
     // console.log(chats, "2222222222");
 
@@ -23,32 +24,32 @@ const ChatBox = (props) => {
     // console.log(user, "999999");
 
     // fetching data for header
-useEffect(() => {
-// console.log("this is use effect from",chats);
-  if (chats) {
-    const userId = chats?.members?.find((id) => id !== currentUser);
-    // console.log(userId)
-    // console.log(chats , "1234");
-    // console.log(userId, "user idddddddddd");
+    useEffect(() => {
+        // console.log("this is use effect from",chats);
+        if (chats) {
+            const userId = chats?.members?.find((id) => id !== currentUser);
+            // console.log(userId)
+            // console.log(chats , "1234");
+            // console.log(userId, "user idddddddddd");
 
-    const getUserData = async () => {
-      try {
-        const data = await getUser(user.id);
-        console.log(data, "get user data");
-        setUserData(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+            const getUserData = async () => {
+                try {
+                    const data = await getUser(user.id);
+                    console.log(data, "get user data");
+                    setUserData(data);
+                } catch (error) {
+                    console.log(error);
+                }
+            };
 
-    if(chats) getUserData();
-  }
-}, [currentUser, chats]);
+            if (chats) getUserData();
+        }
+    }, [currentUser, chats]);
 
 
     // fetch messages
     useEffect(() => {
-        if(chats){
+        if (chats) {
             const fetchMessages = async () => {
                 try {
                     const { data } = await getMessages(chats._id);
@@ -58,11 +59,11 @@ useEffect(() => {
                     console.log(error);
                 }
             };
-    
+
             if (chats !== null) fetchMessages();
 
         }
-      
+
     }, [chats]);
 
 
@@ -76,7 +77,7 @@ useEffect(() => {
     // Send Message
     const handleSend = async (e) => {
         e.preventDefault()
-        if(!newMessage) return
+        if (!newMessage) return
         const message = {
             senderId: currentUser,
             text: newMessage,
@@ -117,21 +118,8 @@ useEffect(() => {
                     <>
                         {/* chat-header */}
                         <div className="chat-header">
-                            <div className="follower">
-                                <div>
-                                    <img
-                                        src={'/profilepic.jpg' }
-                                        alt="Profile"
-                                        className="followerImage"
-                                        style={{ width: "50px", height: "50px" }}
-                                    />
-                                    <div className="name" style={{ fontSize: "0.9rem" }}>
-                                        <span>
-                                            {userData?.name}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            <span><h3>Messages</h3></span>
+                            
                             <hr
                                 style={{
                                     width: "95%",
@@ -142,14 +130,15 @@ useEffect(() => {
                         </div>
                         {/* chat-body */}
                         <div className="chat-body" >
-                            { messages && messages.map((message) => (
+                            {messages && messages.map((message) => (
                                 <>
-                                    <div ref={scroll}
-                                        className={
-                                            message.senderId === currentUser
-                                                ? "message own"
-                                                : "message"
-                                        }
+                                    <div
+                                        ref={scroll}
+                                        className={`message ${message.senderId === currentUser ? "own" : ""}`}
+                                        style={{
+                                            backgroundColor:
+                                                message.senderId === currentUser ? "rgb(72 90 103)" : "rgb(170 80 97)",
+                                        }}
                                     >
                                         <span>{message.text}</span>{" "}
                                         <span>{format(message.createdAt)}</span>
@@ -165,7 +154,9 @@ useEffect(() => {
                                 onChange={handleChange}
                             /> */}
                             <textarea type="text" value={newMessage} onChange={handleChange} />
-                            <button className="send-button button" onClick={handleSend}>Send</button>
+                            <button className="send-button button" onClick={handleSend}>
+                                <FaPaperPlane />
+                            </button>
                             <input
                                 type="file"
                                 name=""
