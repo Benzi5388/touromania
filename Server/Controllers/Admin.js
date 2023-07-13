@@ -3,6 +3,7 @@ import TourModel from '../Models/Tour.js';
 import UserModel from '../Models/User.js';
 const secret = 'test';
 
+
 export const signin = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -40,23 +41,52 @@ export const signin = async (req, res) => {
   };
   
   // Fetch the count of tours
-export const getTourCount = async (req, res) => {
-  try {
-    const tourCount = await TourModel.countDocuments();
-    console.log(tourCount, "nnnnnnnnnn");
-    res.status(201).json({ count: tourCount });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching tour count' });
-  }
-};
+  export const getTourCount = async (req, res) => {
+    try {
+      const tourCounts = await TourModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalCount: { $sum: 1 },
+            publicCount: {
+              $sum: {
+                $cond: [{ $eq: ['$privacy', 'public'] }, 1, 0]
+              }
+            },
+            privateCount: {
+              $sum: {
+                $cond: [{ $eq: ['$privacy', 'private'] }, 1, 0]
+              }
+            }
+          }
+        }
+      ]);
+  
+      if (tourCounts.length === 0) {
+        res.status(404).json({ message: 'Tour count not found' });
+        return;
+      }
+  
+      const { totalCount, publicCount, privateCount } = tourCounts[0];
+      console.log( totalCount, publicCount, privateCount, "counts");
+      res.status(200).json({ totalCount, publicCount, privateCount });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error fetching tour count' });
+    }
+  };
+  
 
 // Fetch the count of users
 export const getUserCount = async (req, res) => {
   try {
     const userCount = await UserModel.countDocuments();
-    console.log(userCount, "usercount");
-    res.status(201).json({ count: userCount });
+    const premiumUserCount = await UserModel.countDocuments({ isPremium: true });
+    const nonPremiumUserCount = userCount - premiumUserCount;
+
+    console.log(userCount, premiumUserCount, nonPremiumUserCount, "usercount");
+
+    res.status(200).json({ totalCount: userCount, premiumCount: premiumUserCount, nonPremiumCount: nonPremiumUserCount });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error fetching user count' });

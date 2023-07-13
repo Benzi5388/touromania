@@ -120,13 +120,6 @@ const ChatBox = (props) => {
                         <div className="chat-header">
                             <span><h3>Messages</h3></span>
                             
-                            <hr
-                                style={{
-                                    width: "95%",
-                                    border: "0.1px solid #ececec",
-                                    marginTop: "20px",
-                                }}
-                            />
                         </div>
                         {/* chat-body */}
                         <div className="chat-body" >
@@ -154,6 +147,7 @@ const ChatBox = (props) => {
                                 onChange={handleChange}
                             /> */}
                             <textarea type="text" value={newMessage} onChange={handleChange} />
+                            
                             <button className="send-button button" onClick={handleSend}>
                                 <FaPaperPlane />
                             </button>
@@ -168,7 +162,9 @@ const ChatBox = (props) => {
                     </>
                 ) : (
                     <span className="chatbox-empty-message">
-                        Tap on a chat to start conversation...
+                        <>
+                        <h4>Tap on a chat to start conversation...</h4>
+                        </>
                     </span>
                 )}
             </div>

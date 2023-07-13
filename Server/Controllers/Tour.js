@@ -20,7 +20,8 @@ export const createTour = async (req, res) => {
       image: uploadedImage[0].url,
       videoUrl,
       name,
-      creator
+      creator,
+      privacy
     });
     newTour.save();
     res.json({ message: 'Tour added successfully' });
@@ -174,6 +175,7 @@ export const getToursByUser = async (req, res) => {
       searchFilters.$or = [
         { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
         { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
+        { name: { $regex: searchQuery, $options: 'i' } }
       ];
     }
     const totalTours = await TourModel.countDocuments({ creator: id, ...searchFilters });

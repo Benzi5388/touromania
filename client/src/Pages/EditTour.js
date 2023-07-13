@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { MDBCardBody, MDBCard, MDBValidation, MDBBtn } from 'mdb-react-ui-kit';
 import ChipInput from 'material-ui-chip-input';
 import { toast } from 'react-toastify';
-import { useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
-import {  updateTour } from '../Redux/Features/tourSlice';
+import { updateTour } from '../Redux/Features/tourSlice';
 import axios from 'axios';
 import Header from '../Components/Header';
 import '../App.css'
@@ -18,10 +18,12 @@ const EditTour = () => {
     const [videoUrl, setVideoUrl] = useState('');
     const [tags, setTag] = useState([]);
     const [selectedTour, setSelectedTour] = useState(null);
+    const [privacy, setPrivacy] = useState(false);
     console.log(id, "uuuuuuuuuuu");
     const user = useSelector((state) => (state.auth.user))
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [location, setLocation] = useState('');
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -33,7 +35,7 @@ const EditTour = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (title && description) {
-            const updatedTour = { title, description, file, tags, videoUrl, name: user?.name, creator: user?.id };
+            const updatedTour = { title, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy };
             console.log(tags, "tags");
             console.log(updatedTour, "jjjjjjjjjj");
 
@@ -48,7 +50,7 @@ const EditTour = () => {
                     toast.success("Tour updated Successfully!!");
                     navigate('/userDashboard');
                 })
-                .catch(()=> {
+                .catch(() => {
                     toast.error('Failed to update tour');
                 });
             // handleClear()
@@ -71,23 +73,23 @@ const EditTour = () => {
     };
 
     // ...
-  
+
     useEffect(() => {
-      // Fetch the selected tour based on the id
-      axios.get(`http://localhost:5000/tour/editTour/${id}`)
-        .then((response) => {
-          const tour = response.data
-          console.log(response.data, "hiiiiii");
-          // Set the state values with the existing values of the selected tour
-          setSelectedTour(tour);
-          setTitle(tour.title);
-          setDescription(tour.description);
-          setTag(tour.tags);
-          setVideoUrl(tour.videoUrl);
-        })
-        .catch(() => {
-          toast.error('Failed to fetch tour');
-        });
+        // Fetch the selected tour based on the id
+        axios.get(`http://localhost:5000/tour/editTour/${id}`)
+            .then((response) => {
+                const tour = response.data
+                console.log(response.data, "hiiiiii");
+                // Set the state values with the existing values of the selected tour
+                setSelectedTour(tour);
+                setTitle(tour.title);
+                setDescription(tour.description);
+                setTag(tour.tags);
+                setVideoUrl(tour.videoUrl);
+            })
+            .catch(() => {
+                toast.error('Failed to fetch tour');
+            });
     }, [id]);
     return (
         <>
@@ -107,6 +109,18 @@ const EditTour = () => {
                                     className='form-control'
                                     invalid
                                     validation='Please provide title'
+                                />
+                            </div>
+                            <div className="col-md-12">
+                                <input
+                                    placeholder='Enter location'
+                                    type='text'
+                                    name='location'
+                                    onChange={(e) => setLocation(e.target.value)}
+                                    className='form-control'
+                                    invalid
+                                    value={location}
+                                    validation='Please provide location'
                                 />
                             </div>
                             <div className="col-md-12 description">
@@ -144,6 +158,31 @@ const EditTour = () => {
                             </div>
                             <div className="d-flex justify-content-start">
                                 <input type="file" name="file" onChange={(e) => setImage(e.target.files[0])} className='mt-4 mb-2' accept='image/*' />
+                            </div>
+                            <div className="col-12">
+                                {/* Radio buttons for privacy selection */}
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="privacy"
+                                        value="public"
+                                        checked={privacy === 'public'}
+                                        onChange={() => setPrivacy('public')}
+                                    />
+                                    <label className="form-check-label">Public</label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="privacy"
+                                        value="private"
+                                        checked={privacy === 'private'}
+                                        onChange={() => setPrivacy('private')}
+                                    />
+                                    <label className="form-check-label">Private</label>
+                                </div>
                             </div>
                             <div className="col-12">
                                 <MDBBtn className="add-button">Submit</MDBBtn>

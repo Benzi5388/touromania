@@ -1,90 +1,101 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useState, useEffect } from "react";
+import { BarChart, XAxis, YAxis, Tooltip, Legend, PieChart, Bar, Pie } from "recharts";
+import axios from "axios";
+import AdminHeader from "../Components/AdminHeader";
 
-import AdminHeader from '../Components/AdminHeader';
-import { Chart, BarController, CategoryScale, LinearScale } from 'chart.js';
-import axios from 'axios'
+const AdminDashboard = () => {
+  const [tourCount, setTourCount] = useState(0);
+  const [privateCount, setPrivateCount] = useState(0);
+  const [publicCount, setPublicCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
+  const [isPremiuimCount, setIsPremiuimCount] = useState(0);
+  const [nonPremuimCount, setnonPremuimCount] = useState(0);
 
-function AdminDashboard() {
-  const [tourData, setTourData] = useState([]);
-  const [userData, setUserData] = useState([]);
-  const chartRef = useRef(null);
-
-  const fetchChartData = async () => {
+  const fetchTourData = async () => {
     try {
-      // Fetch tour count
-      const response = await axios.get('http://localhost:5000/admin/tour-count');
-      const tourCount = response.data.count;
+      const response = await axios.get("http://localhost:5000/admin/tour-count");
+      setUserCount(response.data.totalCount);
+      setPrivateCount(response.data.privateCount);
+      setPublicCount(response.data.publicCount);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-      // Fetch user count
-      const user_count = await axios.get('http://localhost:5000/admin/user-count');
-      const userCount = user_count.data.count;
-
-      // Update the state with the fetched data
-      setTourData(tourCount);
-      setUserData(userCount);
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/admin/user-count");
+      console.log(response.data.totalCount);
+      console.log(response.data.premiumCount);
+      setTourCount(response.data.totalCount);
+      setIsPremiuimCount(response.data.premiumCount);
+      setnonPremuimCount(response.data.nonPremiumCount);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchChartData();
+    fetchTourData();
+    fetchUserData()
   }, []);
- 
-  
-  useEffect(() => {
-    if (tourData.length > 0 && userData.length > 0) {
-      // Prepare tour data for the chart
-      const tourLabels = tourData.map((entry) => entry.month);
-      const tourCounts = tourData.map((entry) => entry.count);
 
-      // Prepare user data for the chart
-      const userLabels = userData.map((entry) => entry.month);
-      const userCounts = userData.map((entry) => entry.count);
+  const tourData = [
+    { name: "Public", Tours: publicCount },
+    { name: "Private", Tours: privateCount },
+  ];
 
-      // Register required Chart.js components
-      Chart.register(BarController, CategoryScale, LinearScale);
+  const userData = [
+    { name: "Premium", Users: isPremiuimCount },
+    { name: "Non-Premium", Users: nonPremuimCount },
+  ];
 
-      // Create the chart
-      const ctx = chartRef.current.getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: tourLabels,
-          datasets: [
-            {
-              label: 'Number of Tours',
-              data: tourCounts,
-              backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            },
-            {
-              label: 'Number of Users',
-              data: userCounts,
-              backgroundColor: 'rgba(255, 99, 132, 0.6)',
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: Math.max(...tourCounts, ...userCounts) + 5,
-            },
-          },
-        },
-      });
-    }
-  }, [tourData, userData]);
 
   return (
     <>
       <AdminHeader />
-      <div>
-        <h3>Tours Added Monthly</h3>
-        <canvas ref={chartRef}></canvas>
+      <div style={{ textAlign: "center" }}>
+        <h1 style={{ marginTop: "70px" }}>Dashboard</h1>
+        <div className="App">
+          <div style={{ display: "flex" }}>
+            <div style={{ flex: 1 }}>
+              <BarChart
+                width={500}
+                height={500}
+                data={tourData}
+                margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+                barSize={20}
+              >
+                <XAxis dataKey="name" />
+                <Tooltip />
+                <Legend />
+                <Bar
+                  dataKey="Tours"
+                  fill="#8884d8"
+                  background={{ fill: "#eee" }}
+                />
+              </BarChart>
+            </div>
+            <div style={{ flex: 1 }}>
+              <PieChart width={500} height={500}>
+                <Pie
+                  dataKey="Users"
+                  data={userData}
+                  cx={200}
+                  cy={200}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  label
+                />
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
-}
+};
 
 export default AdminDashboard;

@@ -107,14 +107,24 @@ export const getUsers = async (req, res) => {
     const limit = 6; // Specify the desired limit per page
     const skip = (parseInt(page) - 1) * limit;
 
-    const totalUsers = await UserModel.countDocuments();
+    const searchQuery = req.query.search;
+    const searchFilters = {};
+
+    if (searchQuery) {
+      searchFilters.$or = [
+        { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
+        { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
+        { name: { $regex: searchQuery, $options: 'i' } }
+      ];
+    }
+     
+    const totalUsers = await UserModel.countDocuments(searchFilters);
     const totalPages = Math.ceil(totalUsers / limit);
 
-    const users = await UserModel.find()
+    const users = await UserModel.find(searchFilters)
       .skip(skip)
       .limit(limit)
       .exec();
-
     res.status(200).json({
       users,
       totalPages,

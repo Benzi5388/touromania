@@ -8,6 +8,6 @@ router.post('/', createChat)
 router.get('/:userId', userChats)
 router.get('/find/:firstId/:secondId', findChat)
 router.get('/user/:id', getUser )
-router.get('/allusers',auth,  getUsers)
+router.get('/', getUsers)
 
 export default router;

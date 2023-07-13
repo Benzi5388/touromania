@@ -2,17 +2,31 @@ import ChatModel from "../Models/ChatModel.js";
 import UserModel from '../Models/User.js';
 
 export const createChat = async (req, res) => {
-    const newChat = new ChatModel({
-        members: [req.body.senderId, req.body.receiverId]
-    })
-
+    const senderId = req.body.senderId;
+    const receiverId = req.body.receiverId;
+  
     try {
-        const result = await newChat.save()
-        res.status(200).json(result)
+      // Check if the chat already exists between the sender and receiver
+      const existingChat = await ChatModel.findOne({
+        members: { $all: [senderId, receiverId] }
+      });
+  
+      if (existingChat) {
+        return res.status(400).json({ message: 'Chat already exists between the users' });
+      }
+  
+      // Create a new chat
+      const newChat = new ChatModel({
+        members: [senderId, receiverId]
+      });
+  
+      const result = await newChat.save();
+      res.status(200).json(result);
     } catch (err) {
-        res.status(500).json(err)
+      res.status(500).json(err);
     }
-}
+  };
+  
 
 export const userChats = async(req, res)=>{
     try{
@@ -28,6 +42,7 @@ export const userChats = async(req, res)=>{
 
 export const findChat = async(req, res)=>{
     try{
+   
      const chat = await ChatModel.findOne({
         members :{$all: [req.params.firstId,req.params.secondId]}})
         res.status(200).json(chat)
@@ -40,7 +55,6 @@ export const getUser = async(req, res)=>{
     try {
         console.log(req.params.id);
         const user = await UserModel.findById(req.params.id);
-        console.log(user, "user from backend");
         res.json(user);
       } catch (error) {
         console.error(error);

@@ -1,7 +1,11 @@
+body {
+  background-image: linear-gradient(to bottom right, #f8f4eb, #ffffff);
+}
+
 /* ADMIN-HEADER COMPONENT */
 
 .mdbnavbar {
-  background-color: #f0e6ea;
+  background-color: #f5e3c5;
 }
 
 .mdbnavbar-brand {
@@ -35,7 +39,7 @@
 /* HEADER */
 
 .header-navbar {
-  background-color: #f0e6ea !important;
+  background-color: #f5e3c5 !important;
 }
 
 .header-navbar-brand {

@@ -21,6 +21,7 @@ function Users() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const admin = JSON.parse(localStorage.getItem('admin'));
@@ -34,7 +35,7 @@ function Users() {
     const fetchUsers = async () => {
       try {
           const admin = localStorage.getItem('admintoken');
-        const response = await axios.get(`http://localhost:5000/admin/users/?page=${currentPage}`, {
+        const response = await axios.get(`http://localhost:5000/admin/users/?page=${currentPage}&search=${searchQuery}`, {
           headers: {
             'Authorization': `Bearer ${admin}`
           }}); 
@@ -60,6 +61,16 @@ function Users() {
       </>
     );
   }
+
+  const handleSearch = async (searchQuery) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/admin/users/?page=${currentPage}&search=${searchQuery}`)
+      dispatch(saveUserData(response.data.users));
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDeleteUser = (item_id) => {
     Swal.fire({
@@ -91,7 +102,7 @@ function Users() {
 
   return (
     <>
-      <AdminHeader />
+      <AdminHeader handleSearch= {handleSearch}/>
       <div className='mt-5'>
         <table className="table align-middle ps-5 pe-5  bg-white tour-table">
           <thead className="bg-light">

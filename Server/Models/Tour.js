@@ -29,6 +29,11 @@ const tourSchema = mongoose.Schema({
     listed: {
         type: Boolean,
         default: true
+    },
+    privacy: {
+      type: String,
+      enum: ['public', 'private'],
+      default: 'public'
     }
 },
  { timestamps: true })

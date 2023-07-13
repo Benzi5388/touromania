@@ -4,13 +4,35 @@
     grid-template-columns: 22% auto;
     gap: 1rem;
     margin-top: 70px;
-    background: linear-gradient(to bottom, #d4ddec, #f4dbf0);
+    background: linear-gradient(to bottom right, #f8f4eb, #ffffff);
   }
   
   .Left-side-chat {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    flex: 1;
+    height: 90vh; /* Set a fixed height for the chat section */
+    overflow-y: auto; /* Enable vertical scrolling within the chat section */
+  }
+  
+  .Conversation-list {
+    width: 100%;
+  }
+
+  
+  /* Add any additional CSS styles as needed */
+  .Left-side-chat::-webkit-scrollbar {
+    width: 6px; /* Set the width of the scrollbar */
+  }
+  
+  .Left-side-chat::-webkit-scrollbar-track {
+    background-color: transparent; /* Set the background color of the scrollbar track */
+  }
+  
+  .Left-side-chat::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* Set the color of the scrollbar thumb */
+  }
+  
+  .Left-side-chat::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4); /* Set the color of the scrollbar thumb on hover */
   }
   
   .Chat-container {

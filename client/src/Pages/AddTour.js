@@ -23,6 +23,7 @@ const AddEditTour = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [privacy, setPrivacy] = useState('public');
 
   useEffect(() => {
     const user = localStorage.getItem('user');
@@ -38,7 +39,7 @@ const AddEditTour = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && description) {
-      const updatedTourData = { title,location, description, file, tags, videoUrl, name: user?.name, creator: user?.id }
+      const updatedTourData = { title, location, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy }
       console.log(user, "user");
       axios.post("http://localhost:5000/tour/addtour", updatedTourData, {
         headers: {
@@ -118,6 +119,7 @@ const AddEditTour = () => {
                   value={description}
                   name='description'
                   onChange={(e) => setDescription(e.target.value)}
+                  style={{ height: '100px' }}
                   className='form-control'
                   invalid
                   validation='Please provide some description'
@@ -146,6 +148,31 @@ const AddEditTour = () => {
               </div>
               <div className="d-flex justify-content-start">
                 <input type="file" name="file" onChange={(e) => setImage(e.target.files[0])} className='mt-4 mb-2' accept='image/*' />
+              </div>
+              <div className="col-12">
+                {/* Radio buttons for privacy selection */}
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="privacy"
+                    value="public"
+                    checked={privacy === 'public'}
+                    onChange={() => setPrivacy('public')}
+                  />
+                  <label className="form-check-label">Public</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="privacy"
+                    value="private"
+                    checked={privacy === 'private'}
+                    onChange={() => setPrivacy('private')}
+                  />
+                  <label className="form-check-label">Private</label>
+                </div>
               </div>
               <div className="col-12">
                 <MDBBtn className="add-button">Submit</MDBBtn>

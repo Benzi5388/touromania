@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { MDBCol, MDBContainer, MDBRow, MDBSpinner, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
+import { MDBCol, MDBContainer, MDBRow, MDBSpinner, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBCarousel, MDBCarouselItem, } from 'mdb-react-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { useNavigate } from 'react-router-dom';
 import { setTours } from '../Redux/Features/tourSlice';
 import CardTour from '../Components/CardTour';
 import Header from '../Components/Header'
 import axios from 'axios';
 import '../App.css';
+import Banner from '../Components/Banner';
 
 
 function Home() {
@@ -19,7 +21,7 @@ function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [sortOption, setSortOption] = useState('recent');
 
-console.log(user, "home page user");
+  console.log(user, "home page user");
   useEffect(() => {
     const fetchTourData = async () => {
       try {
@@ -68,6 +70,7 @@ console.log(user, "home page user");
   return (
     <>
       <Header handleSearch={handleSearch} />
+      <Banner/>
       <div className='card-style' >
         <MDBRow className='mt-5'>
           {tours.length === 0 ? (
@@ -78,26 +81,29 @@ console.log(user, "home page user");
               </div>
             </MDBCol>
           ) : (
-
-            <MDBCol >
-              <MDBContainer>
-                <div className='sort-dropdown'>
-                  <label>Sort:</label>
-                  <select
-                    className='form-select form-select-sm'
-                    value={sortOption}
-                    onChange={(e) => handleSortChange(e.target.value)}
-                    style={{ fontSize: '14px' }}
-                  >
-                    <option value='recent' className="option_value">Date</option>
-                    <option value='likes' className="option_value">Likes</option>
-                  </select>
-                </div>
-                <MDBRow className='row-cols-1 row-cols-md-3 g-2'>
-                  {tours && tours.map((item, index) => <CardTour key={index} {...item} handleSortChange={handleSortChange} />)}
-                </MDBRow>
-              </MDBContainer>
-            </MDBCol>)}
+            <>
+              <MDBCol >
+                <MDBContainer>
+                  <div className='sort-dropdown'>
+                    <label>Sort:</label>
+                    <select
+                      className='form-select form-select-sm'
+                      value={sortOption}
+                      onChange={(e) => handleSortChange(e.target.value)}
+                      style={{ fontSize: '14px' }}
+                    >
+                      <option value='recent' className="option_value">Date</option>
+                      <option value='likes' className="option_value">Likes</option>
+                    </select>
+                  </div>
+                  
+                  <MDBRow className='row-cols-1 row-cols-md-3 g-2'>
+                    {tours && tours.map((item, index) => <CardTour key={index} {...item} handleSortChange={handleSortChange} />)}
+                  </MDBRow>
+                </MDBContainer>
+              </MDBCol>
+            </>
+          )}
         </MDBRow>
         {tours.length > 0 && (
           <MDBRow className='pagination-row'>

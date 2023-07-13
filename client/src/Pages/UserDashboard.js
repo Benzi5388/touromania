@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MDBCard, MDBCardTitle, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBBtn, MDBIcon, MDBCardGroup, MDBSpinner, MDBCol, MDBContainer, MDBPaginationItem, MDBPaginationLink, MDBPagination } from "mdb-react-ui-kit";
+import { MDBCard, MDBCardTitle, MDBBadge, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBBtn, MDBIcon, MDBCardGroup, MDBSpinner, MDBCol, MDBContainer, MDBPaginationItem, MDBPaginationLink, MDBPagination } from "mdb-react-ui-kit";
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { setToursByUser, updateTour } from '../Redux/Features/tourSlice';
@@ -96,9 +96,17 @@ function UserDashboard() {
 
   return (
     <>
-      <Header handleSearch={handleSearch}/>
+      <Header handleSearch={handleSearch} />
       <div className='dashboard_container'>
-        <h4 className='text-center'>Dashboard : {user?.name}</h4>
+        <h4 className='text-center'>
+          Dashboard: {user?.name}
+          {user?.isPremium ? (
+            <MDBBadge className='ms-2'>Premium</MDBBadge>
+          ) : (
+            <MDBBadge className='ms-2'>Basic</MDBBadge>
+          )}
+        </h4>
+
         <h6 className='text-center text-muted'>E-mail : {user?.email}</h6>
         <hr style={{ maxWidth: "570px" }} />
         {usertours.length === 0 && (

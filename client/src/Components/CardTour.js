@@ -8,7 +8,7 @@ import { setNewTourState, setLikedTourIds } from '../Redux/Features/tourSlice';
 import { useSelector } from 'react-redux';
 import { Tooltip } from 'react-tooltip';
 
-function CardTour({ title, location, description, tags, _id, name, image, createdAt, likes, userId }) {
+function CardTour({ title, location, description, tags, _id, name, image, createdAt, likes, userId, privacy }) {
   const [liked, setLiked] = useState(false);
   const likedTourIds = useSelector(state => state.tour.likedTourIds);
   const user = useSelector(state => state.auth.user);
@@ -22,7 +22,6 @@ function CardTour({ title, location, description, tags, _id, name, image, create
   };
 
   const Likes = () => {
-
     if (!user) {
       // User does not exist, redirect to login page
       return (
@@ -32,18 +31,23 @@ function CardTour({ title, location, description, tags, _id, name, image, create
         </Link>
       );
     }
+  
     if (likes.length > 0) {
-      if (likes.includes(userId)) {
+      const likeCount = likes.length;
+      const includesUser = likes.includes(userId);
+      const liked = includesUser;
+  
+      if (liked) {
         return (
           <>
             <MDBIcon fas icon='thumbs-up' />
             &nbsp;
-            {likes.length > 2 ? (
-              <MDBTooltip content={`You and ${likes.length - 1} others like this`}>
-              {likes.length}
-            </MDBTooltip>
+            {likeCount > 2 ? (
+              <MDBTooltip content={`You and ${likeCount - 1} others like this`}>
+                {likeCount}
+              </MDBTooltip>
             ) : (
-              `${likes.length} Like${likes.length > 1 ? 's' : ''}`
+              `${likeCount} Like${likeCount > 1 ? 's' : ''}`
             )}
           </>
         );
@@ -53,14 +57,15 @@ function CardTour({ title, location, description, tags, _id, name, image, create
     return (
       <>
         {liked ? (
-          <MDBIcon far icon='thumbs-up' style={{ color: 'blue' }} />
+          <MDBIcon fas icon='thumbs-up' style={{ color: 'blue' }} />
         ) : (
-          <MDBIcon fas icon='thumbs-up' />
+          <MDBIcon far icon='thumbs-up' />
         )}
         &nbsp;{likes.length} Like{likes.length !== 1 ? 's' : ''}
       </>
     );
   };
+  
   
   
 
@@ -102,6 +107,7 @@ function CardTour({ title, location, description, tags, _id, name, image, create
 
   const imageUrl = `http://localhost:5000/uploads/${image}`;
   return (
+    
     <MDBCardGroup>
       <MDBCard className='h-100 mt-3 d-sm-flex mdb-card'>
         <MDBCardImage

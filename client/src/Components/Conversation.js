@@ -17,7 +17,6 @@ const Conversation = (props) => {
           const response =await getUser(userId)
           setUserData(response.data)
           console.log(response.data, "the user dataaaaa");
-         dispatch({type:"SAVE_USER", data:data})
     }
     getUserData();
   }, [])

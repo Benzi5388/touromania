@@ -20,7 +20,18 @@ export const getMessages = async (req, res) => {
     const { chatId } = req.params;
     console.log(chatId, "dffdfdfdsds");
     try {
-        const result = await MessageModel.find({chatId})
+
+        const searchQuery = req.query.search;
+        const searchFilters = {};
+    
+        if (searchQuery) {
+          searchFilters.$or = [
+            { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
+            { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
+            { name: { $regex: searchQuery, $options: 'i' } }
+          ];
+        }
+        const result = await MessageModel.find({chatId, ...searchQuery})
         res.status(200).json(result)
     } catch (err) {
         res.status(500).json(err)

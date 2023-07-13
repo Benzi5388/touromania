@@ -22,20 +22,22 @@ app.use(express.static(path.resolve()+'/public'))
 
 app.use('/uploads', express.static('public/uploads'));
 
-const allowedOrigins = ['http://localhost:3000', 'https://accounts.google.com'];
+// const allowedOrigins = ['http://localhost:3000', 'https://accounts.google.com'];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-};
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (allowedOrigins.includes(origin) || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+app.use(cors({origin:["http://localhost:3000"], credentials:true}))
 
 
 
@@ -48,11 +50,11 @@ app.use(cors(corsOptions));
 
   dotenv.config()
 
-  app.use((req, res, next) => {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  //   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  //   next();
+  // });
 
   
 app.use('/users', userRouter);

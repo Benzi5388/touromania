@@ -19,6 +19,10 @@ const userSchema = mongoose.Schema ({
    },
    id:{
     type: String
+   },
+   isPremium :{
+      type : Boolean,
+      default:false
    }
 });
 

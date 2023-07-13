@@ -62,8 +62,8 @@ const API = axios.create({
       baseURL: 'http://localhost:5000',
     });
 
-export const getUser = (userId) => API.get(`chat/user/${userId}`);
-export const getUsers = () => API.get(`chat/allusers/`);
+export const getUser = (userId) => API.get(`/chat/user/${userId}`);
+export const getUsers = () => API.get(`/chat/`);
 
 // CHAT API
 export const createChat = (data) => API.post('/chat/', data);
