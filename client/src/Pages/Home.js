@@ -16,6 +16,7 @@ function Home() {
   const dispatch = useDispatch();
   const { tours, loading } = useSelector((state) => state.tour);
   const user = useSelector((state) => (state.auth.user))
+  const googleUser = useSelector((state) => (state.auth.googleData))
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

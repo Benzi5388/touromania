@@ -24,6 +24,7 @@ import EditTour from './Pages/EditTour';
 import Description from './Pages/Description';
 import AdminDashboard from './Pages/AdminDashboard';
 import Chat from './Pages/Chat/Chat';
+import UserAuth from './Components/UserAuth';
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
 
         <ToastContainer />
         <Routes>
+          
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
@@ -71,6 +73,7 @@ function App() {
           <Route path='/tours/:id' element={<Tours />} />
           <Route path='/UserDashboard' element={<UserDashboard />} />
           <Route path='/chat' element={<Chat/>} />
+          <Route path='/callback' element={<UserAuth/>} />
 
 
         </Routes>

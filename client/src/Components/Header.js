@@ -29,12 +29,15 @@ function Header({ handleSearch }) {
   useEffect(() => {
     // Fetch user data from the Redux store directly
     const userData = localStorage.getItem('userData');
-    if (userData) {
+    const googleData = localStorage.getItem('googleData');
+
+    if (userData ) {
       dispatch(saveUserData(JSON.parse(userData)));
     }
   }, [dispatch]);
 
   const user = useSelector((state) => (state.auth.user))
+  const googleUser = useSelector((state) => (state.auth.googleData))
 
   return (
     <MDBNavbar className="header-navbar" fixed="top" expand="lg">

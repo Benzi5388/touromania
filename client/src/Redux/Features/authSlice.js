@@ -13,6 +13,8 @@ const authSlice = createSlice({
     saveUserData: (state, action) => {
       state.user = action.payload;
       localStorage.setItem('user', JSON.stringify(action.payload)); 
+      state.googleData = action.payload;
+      console.log(state.googleData, "google data from redux");
     },
     setLogout: (state) => {
       localStorage.removeItem('user');
@@ -27,7 +29,8 @@ const authSlice = createSlice({
       state.email = action.payload.email;
       state.formValue = action.payload;
     },saveGoogleData: (state, action) => {
-      state.googleData = action.payload;
+      state.user = action.payload;
+      localStorage.setItem('user', JSON.stringify(action.payload)); 
     },updateUser: (state, action) => {
       const { userId } = action.payload;
       const existingUserIndex = state.user.findIndex((user) => user._id === userId);

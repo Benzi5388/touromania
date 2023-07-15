@@ -20,6 +20,9 @@ app.use(express.urlencoded({limit :'10mb', extended : true}))
 app.use(cookieParser())
 app.use(express.static(path.resolve()+'/public'))
 
+dotenv.config();
+
+
 app.use('/uploads', express.static('public/uploads'));
 
 // const allowedOrigins = ['http://localhost:3000', 'https://accounts.google.com'];
@@ -39,8 +42,6 @@ app.use('/uploads', express.static('public/uploads'));
 
 app.use(cors({origin:["http://localhost:3000"], credentials:true}))
 
-
-
 // Set COOP headers in your Express app
 
 // app.use((req, res, next) => {
@@ -48,7 +49,7 @@ app.use(cors({origin:["http://localhost:3000"], credentials:true}))
 //     next();
 //   });
 
-  dotenv.config()
+
 
   // app.use((req, res, next) => {
   //   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
@@ -78,4 +79,3 @@ app.listen(port, ()=>{
   console.log("port running on 5000 " );  
   
 })
-// mongodb+srv://benzi5388:fCc4PtAVLFuW8FHe@cluster0.phfdrr6.mongodb.net/?retryWrites=true&w=majority

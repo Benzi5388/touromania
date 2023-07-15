@@ -35,7 +35,7 @@ const EditTour = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (title && description) {
-            const updatedTour = { title, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy };
+            const updatedTour = { title, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy, location };
             console.log(tags, "tags");
             console.log(updatedTour, "jjjjjjjjjj");
 

@@ -13,8 +13,10 @@ export default function UserAuthCallback() {
     (async function(){
       const token= searchParams.get('token')
       const {data}= await axios.get("/user/auth/google/verify?token="+token);
+            localStorage.setItem('token', token);
+            localStorage.setItem('userData', JSON.stringify(userData));
+            dispatch(saveUserData(userData));
       if(!data.err){
-        dispatch({type:"refresh"})
         navigate("/")
       }
       navigate("/login")

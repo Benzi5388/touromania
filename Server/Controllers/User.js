@@ -2,9 +2,23 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import UserModel from '../Models/User.js';
 import { sentOTP } from '../Helpers/SendOtp.js';
+import axios from 'axios'
+import dotenv from 'dotenv'
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { log } from 'console';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+console.log(process.env.CLIENT_ID, "client id in controller");
+console.log(process.env.CLIENT_SECRET, "client secret in controller");
+console.log(process.env.SERVER_URL, "server url from cotroller");
+
 
 const secret = 'test';
-
 
 //POST METHOD FOR SIGNIN
 export const signin = async (req, res) => {
@@ -209,6 +223,7 @@ export const resetPassword = async (req, res) => {
 };
 
 
+
 export const deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
@@ -227,21 +242,44 @@ export const deleteUser = async (req, res) => {
 
 
 export const googleSignIn = async (req, res) => {
-  const { email, name, token, googleId } = req.body;
-
   try {
-    const oldUser = await UserModel.findOne({ email });
-    if (oldUser) {
-      const result = { _id: oldUser._id.toString(), email, name }
-      return res.status(200).json({ result, token })
-    }
-    const result = await UserModel.create({
-      email, name, googleId
-    });
+   
+    const CLIENT_ID = process.env.CLIENT_ID;
+    const CLIENT_SECRET = process.env.CLIENT_SECRET;
+    const REDIRECT_URI = process.env.SERVER_URL + "/users/google/callback";
+    const { code } = req.query;
+    const tokenResponse = await axios.post(
+      "https://oauth2.googleapis.com/token",
+      {
+        code,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
+        grant_type: "authorization_code",
+      }
+    );
+  
+    const { access_token } = tokenResponse.data;
+    const userInfo = await axios.get(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+    );
+console.log(userInfo, "info");
 
-    res.status(200).json({ result, token })
-  } catch (err) {
-    res.status(500).json({ message: 'Something went wrong' });
+    const user = {
+      email: userInfo.data.email,
+      name: userInfo.data.name,
+    };
+    await UserModel.findOneAndUpdate(
+      { email: user.email },
+      { $set: { picture: user.picture, name: user.name } },
+      { upsert: true }
+    );
+    let newUser = await UserModel.findOne({ email: user.email });
+    const token = jwt.sign({ id: newUser._id, email :user.email }, secret);
+    res.redirect(`${process.env.CLIENT_URL}/callback?token=${token}`);
+  } catch (error) {
+    console.error("Google authentication error:", error.message);
+    res.json({ err: true, error, message: "Google Authentication failed" });
   }
 }
 
@@ -260,4 +298,38 @@ export const logOut = (req, res) => {
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
+
+export async function verifyGAuth(req, res) {
+  try {
+    const token = req.query.token;
+    if (!token) {
+      return res.json({ loggedIn: false, err: true, message: "no token" });
+    }
+    const verifiedJWT = jwt.verify(token, secret);
+    if (!verifiedJWT) {
+      return res.json({ loggedIn: false, err: true, message: "no token" });
+    }
+
+    const user = await UserModel.findById(verifiedJWT.id, { password: 0 });
+    if (!user) {
+      return res.json({ loggedIn: false, err: true, message: "no user found" });
+    }
+    if (user.block) {
+      return res.json({ loggedIn: false, err: true, message: "user blocked" });
+    }
+
+    return res
+      .cookie("user", token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7 * 30,
+        sameSite: "none",
+      })
+      .json({ error: false, user: user._id, token });
+  } catch (error) {
+    console.log("Google authentication failed:", error);
+    res.json({ err: true, error, message: "Google Authentication failed" });
+  }
+}
+
 
