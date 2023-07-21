@@ -59,7 +59,7 @@ import axios from 'axios';
 // USER REQUEST
 
 export const API = axios.create({
-      baseURL: 'http://localhost:5000',
+      baseURL: 'https://touromania.unitedwestand.online',
     });
 
 export const getUser = (userId) => API.get(`/chat/user/${userId}`);
