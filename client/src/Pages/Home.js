@@ -70,7 +70,7 @@ function Home() {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}&sort=${sortOption}`);
+      const response = await API.get(`/tour/?page=${currentPage}&search=${searchQuery}&sort=${sortOption}`);
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
     } catch (error) {

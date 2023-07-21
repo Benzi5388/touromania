@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { saveUserData } from "../Redux/Features/authSlice";
+import API from '../Axios/Api'
 
 export default function UserAuth() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,8 +14,7 @@ export default function UserAuth() {
   useEffect(() => {
     (async function () {
       const token = searchParams.get("token");
-      const { data } = await axios.get(
-        "http://localhost:5000/users/google/verify?token=" + token
+      const { data } = await API.get("/users/google/verify?token=" + token
       );
       if (!data.err) {
         localStorage.setItem('user', token);

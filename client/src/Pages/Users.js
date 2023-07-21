@@ -65,7 +65,7 @@ function Users() {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/admin/users/?page=${currentPage}&search=${searchQuery}`)
+      const response = await API.get(`/admin/users/?page=${currentPage}&search=${searchQuery}`)
       dispatch(saveUserData(response.data.users));
       setTotalPages(response.data.totalPages);
     } catch (error) {

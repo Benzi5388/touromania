@@ -59,7 +59,7 @@ const AddEditTour = () => {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      const response = await API.get(`/tour/?page=${currentPage}&search=${searchQuery}`);
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
       navigate('/')

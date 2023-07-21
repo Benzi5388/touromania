@@ -75,7 +75,7 @@ function Tours() {
         startDate: startDate,
         endDate: endDate,
       });
-      const response = await axios.get(`http://localhost:5000/admin/tours/?${queryParams.toString()}`);
+      const response = await API.get(`/admin/tours/?${queryParams.toString()}`);
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -87,7 +87,7 @@ function Tours() {
     const fetchTourData = async () => {
       try {
         console.log(API, "toooooooooooooo");
-        const response = await axios.get(`http://localhost:5000/admin/tours/?page=${currentPage}`);
+        const response = await API.get(`/admin/tours/?page=${currentPage}`);
         dispatch(setTours(response.data.tours));
         setTotalPages(response.data.totalPages);
         setIsLoading(false);
@@ -145,7 +145,7 @@ function Tours() {
     return str;
   };
 
-  const imageUrl = `http://localhost:5000/uploads/`;
+  // const imageUrl = `http://localhost:5000/uploads/`;
   return (
     <>
       <AdminHeader handleSearch={handleSearch} />
