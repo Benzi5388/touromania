@@ -3,10 +3,13 @@ import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDB
 import { Link, useNavigate } from 'react-router-dom'; 
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
-import { saveGoogleData, saveUserData } from '../Redux/Features/authSlice';
+import { saveUserData } from '../Redux/Features/authSlice';
 import axios from 'axios';
 import Header from '../Components/Header';
 import '../App.css';
+import loginanimation from "../Assets/loginanimation.json"
+import Lotie from 'lottie-react'
+import API from '../Axios/Api'
 
 
 const initialState = {
@@ -17,7 +20,7 @@ function Login() {
     const [formValue, setFormValue] = useState(initialState)
     const [loading, setLoading] = useState(false); 
     const user = useSelector((state) => state.auth.user);
-    console.log(user, "userdata");
+    console.log(user, "login page");
     const {email, password} = formValue;
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -26,12 +29,11 @@ function Login() {
       e.preventDefault();
       if (email && password) {
         try {
-          const response = await axios.post('http://localhost:5000/users/signin', { formValue });
+          const response = await API.post('/users/signin', { formValue });
           if (response.data.token) {
             const { token, userData } = response.data;
-            localStorage.setItem('token', token);
-            localStorage.setItem('userData', JSON.stringify(userData));
             dispatch(saveUserData(userData));
+            console.log(userData, "userData");
             navigate('/');
             toast.success("Logged in Successfully");
           } else {
@@ -43,6 +45,7 @@ function Login() {
       }
     };
     
+
       
     const onInputChange = (e)=>{
        let {name, value} = e.target
@@ -51,10 +54,10 @@ function Login() {
 
 
   useEffect(() => {
-    if (user) {
-      navigate('/'); // Navigate to the home route
+    if (user?.login===false) {
+      navigate('/login'); // Navigate to the home route
     }
-  }, [user, navigate]);
+  }, [ navigate]);
 
   const handleGoogleLogin = async (e) => {
     e.preventDefault();
@@ -77,8 +80,12 @@ function Login() {
     <>
     <Header/>
     <div className='header-container'>
+      
         <MDBCard alignment='center'>
-            <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
+        <div className="animation-container">
+    <Lotie animationData={loginanimation} className="login-animation" />
+  </div>
+            {/* <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon> */}
             <h5>Sign In</h5>
             <MDBCardBody>
                 <MDBValidation onSubmit={handleSubmit} noValidate className='row g-3'>
@@ -124,9 +131,9 @@ function Login() {
                 <Link to="/register">
                 <p>Don't have an account? Sign up</p>
                 </Link>
-                <Link to="/forgotPassword">
+                {/* <Link to="/forgotPassword">
                 <p>Forgot password?</p>
-                </Link>
+                </Link> */}
             </MDBCardFooter>
         </MDBCard>
     </div>

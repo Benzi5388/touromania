@@ -11,6 +11,7 @@ import Header from '../Components/Header';
 import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import DisqusThread from '../Components/disqus';
+import API from '../Axios/Api'
 
 function SingleTour() {
   const dispatch = useDispatch()
@@ -18,13 +19,14 @@ function SingleTour() {
   const { selectedTour, loading } = useSelector((state) => state.tour);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const user = useSelector((state) => (state.auth.user))
 
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      const response = await API.get(`/tour/?page=${currentPage}&search=${searchQuery}`);
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
       navigate('/')
@@ -33,10 +35,15 @@ function SingleTour() {
     }
   };
 
+ useEffect(() => {
+    if (user?.login===false) {
+      navigate('/login'); // Navigate to the admin login route
+    }
+  }, []);
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/users/${id}`);
+        const response = await API.get(`/users/${id}`);
         console.log(response.data, "res.data");
         dispatch(setTour(response.data));
         setIsLoading(false);

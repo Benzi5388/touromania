@@ -16,10 +16,9 @@ export default function UserAuth() {
       const { data } = await axios.get(
         "http://localhost:5000/users/google/verify?token=" + token
       );
-      console.log(data);
-      if (!data.error) {
+      if (!data.err) {
         localStorage.setItem('user', token);
-        dispatch(saveUserData({ token, data }));
+        dispatch(saveUserData({ token, ...data.user }));
         navigate("/");
       } else {
         navigate("/login");

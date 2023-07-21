@@ -1,42 +1,39 @@
 import React, {useState, useEffect} from 'react';
-import {MDBInputGroup, MDBInputGroupElement, MDBInputGroupText, MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav} from 'mdb-react-ui-kit';
+import { MDBInputGroupText, MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav} from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLogout, setUser } from '../Redux/Features/adminSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css'
 import axios from 'axios'
-
+import API from '../Axios/Api'
+import { toast } from 'react-toastify';
 
 
 function AdminHeader({handleSearch}) {
     const [show, setShow] = useState(false)
     const dispatch = useDispatch();
-    const admin = useSelector((state) => state.admin.user);
     const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
+    const admin= useSelector((state)=>state.admin.user)
 
     const handleLogout = async() =>{
       try {
-        await axios.get('http://localhost:5000/admin/logout'); // Call the logout route on the server
-        // Perform any additional logout actions (e.g., clear local storage, redirect)
+        await API.get('/admin/logout'); // Call the logout route on the server
         dispatch(setLogout())
       } catch (error) {
-        console.error('Logout error:', error);
+        toast.error('Something went wrong');
       }
-      
     }
 
     const handleSubmit = (e) => {
       e.preventDefault(); // Prevents the default form submission
       handleSearch(searchQuery);
     };
+
     useEffect(() => {
-      const admin = JSON.parse(localStorage.getItem('admin'));
-      if (!admin) {
+      if (admin?.user?.login==false) {
         navigate('/adminLogin'); // Navigate to the admin login route
-      } else {
-        dispatch(setUser(admin)); // Update the admin state in Redux store
       }
     }, [dispatch, navigate]);
 

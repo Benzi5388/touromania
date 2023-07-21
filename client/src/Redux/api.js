@@ -58,7 +58,7 @@ import axios from 'axios';
 
 // USER REQUEST
 
-const API = axios.create({
+export const API = axios.create({
       baseURL: 'http://localhost:5000',
     });
 

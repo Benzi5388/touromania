@@ -5,38 +5,37 @@ import { getUser } from "../Redux/api";
 import "./ChatBox.css";
 import { format } from "timeago.js";
 import { FaPaperPlane } from "react-icons/fa";
+import chatbox from '../Assets/chatbox';
+import Lottie from "lottie-react";
+import {useSelector, useDispatch} from 'react-redux'
+import { saveUserData } from "../Redux/Features/authSlice";
 
 
 const ChatBox = (props) => {
     console.log(props)
     const { chats, currentUser, setSendMessage, receivedMessage } = props;
 
-    // console.log(chats, "2222222222");
-
-    const [userData, setUserData] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
-    const user = JSON.parse(localStorage.getItem('user'));
+    const [isLoading, setIsLoading] = useState(true);
+    const dispatch = useDispatch()
+    const user = useSelector((state) => (state.auth.user))
+    console.log(user, "user details from chatbox page");
     const handleChange = (e) => {
         setNewMessage(e.target.value)
     }
 
-    // console.log(user, "999999");
-
-    // fetching data for header
     useEffect(() => {
-        // console.log("this is use effect from",chats);
         if (chats) {
             const userId = chats?.members?.find((id) => id !== currentUser);
-            // console.log(userId)
-            // console.log(chats , "1234");
-            // console.log(userId, "user idddddddddd");
+            console.log(userId)
+            console.log(chats , "1234");
+            console.log(userId, "user idddddddddd");
 
             const getUserData = async () => {
                 try {
                     const data = await getUser(user.id);
                     console.log(data, "get user data");
-                    setUserData(data);
                 } catch (error) {
                     console.log(error);
                 }
@@ -55,6 +54,8 @@ const ChatBox = (props) => {
                     const { data } = await getMessages(chats._id);
                     console.log(data, "messsssages");
                     setMessages(data);
+                    setIsLoading(false);
+                    dispatch(saveUserData(user))
                 } catch (error) {
                     console.log(error);
                 }
@@ -71,8 +72,6 @@ const ChatBox = (props) => {
     useEffect(() => {
         scroll.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages])
-
-
 
     // Send Message
     const handleSend = async (e) => {
@@ -119,7 +118,7 @@ const ChatBox = (props) => {
                         {/* chat-header */}
                         <div className="chat-header">
                             <span><h3>Messages</h3></span>
-                            
+
                         </div>
                         {/* chat-body */}
                         <div className="chat-body" >
@@ -129,13 +128,17 @@ const ChatBox = (props) => {
                                         ref={scroll}
                                         className={`message ${message.senderId === currentUser ? "own" : ""}`}
                                         style={{
-                                            backgroundColor:
-                                                message.senderId === currentUser ? "rgb(72 90 103)" : "rgb(170 80 97)",
+                                            background:
+                                                message.senderId === currentUser ? "linear-gradient(98.63deg, #24e4f0 0%, #358ff9 100%)" : "linear-gradient(98.63deg, #24e4f0 0%, #358ff9 100%)",
+                                            color: message.senderId === currentUser ? "#fff" : "#fff"
                                         }}
                                     >
                                         <span>{message.text}</span>{" "}
+                                        
                                         <span>{format(message.createdAt)}</span>
+                                        
                                     </div>
+                                    
                                 </>
                             ))}
                         </div>
@@ -147,9 +150,9 @@ const ChatBox = (props) => {
                                 onChange={handleChange}
                             /> */}
                             <textarea type="text" value={newMessage} onChange={handleChange} />
-                            
-                            <button className="send-button button" onClick={handleSend}>
-                                <FaPaperPlane />
+
+                            <button  onClick={handleSend} style={{ border: "none" ,padding:"0px"}}>
+                                <i className="fas fa-arrow-right-from-bracket" style={{ fontSize: "40px",color:"#EF9CAA", backgroundColor:"#fff" }}></i>
                             </button>
                             <input
                                 type="file"
@@ -161,10 +164,13 @@ const ChatBox = (props) => {
                         </div>{" "}
                     </>
                 ) : (
-                    <span className="chatbox-empty-message">
-                        <>
-                        <h4>Tap on a chat to start conversation...</h4>
-                        </>
+                    <span className="chatbox-empty-message" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '20px', marginBottom: '10px', marginTop: "700px", fontWeight: "bold" }}>Tap on a chat to start a conversation...</div>
+                            <div style={{ width: '500px', height: '500px' }}>
+                                <Lottie animationData={chatbox} />
+                            </div>
+                        </div>
                     </span>
                 )}
             </div>

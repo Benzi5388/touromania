@@ -7,6 +7,9 @@ import axios from 'axios'
 import Cookies from 'js-cookie';
 import Header from '../Components/Header';
 import '../App.css'
+import loginanimation from "../Assets/loginanimation.json"
+import Lotie from 'lottie-react'
+import API from '../Axios/Api'
 
 
 const initialState = {
@@ -28,7 +31,7 @@ function ForgotPassword() {
         e.preventDefault();
         if (email) {
           try {
-            const response = await axios.post('http://localhost:5000/users/forgotPassword', { email :email});
+            const response = await API.post('/users/forgotPassword', { email :email});
             console.log(response.data); // Log the response from the server
             Cookies.set('email', email, { expires: 1 });
             navigate('/verifyOTP')
@@ -48,9 +51,12 @@ function ForgotPassword() {
   return (
     <>
     <Header/>
-    <div className='header-container'>
+    <div className='header-container'  >
+      <div style={{marginBottom:"25px", marginTop:"25px"}}>
         <MDBCard alignment='center'>
-            <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
+        <div className="animation-container">
+    <Lotie animationData={loginanimation} className="login-animation" />
+  </div>
             <h5>Please enter your email</h5>
             <MDBCardBody>
                 <MDBValidation onSubmit={handleSubmit} noValidate className='row g-3'>
@@ -84,6 +90,7 @@ function ForgotPassword() {
                 </Link>
             </MDBCardFooter>
         </MDBCard>
+        </div>
     </div>
     </>
   )

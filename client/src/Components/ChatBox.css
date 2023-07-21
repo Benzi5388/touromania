@@ -15,7 +15,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    padding: 1.5rem;
+    padding: 3.5rem;
     overflow: scroll;
 }
 
@@ -41,7 +41,7 @@
 .own {
   align-self: flex-end;
   border-radius: 1rem 1rem 0 1rem;
-  background: linear-gradient(98.63deg, #24e4f0 0%, #358ff9 100%);
+  /* background: linear-gradient(98.63deg, #24e4f0 0%, #358ff9 100%); */
 }
 
 
@@ -64,7 +64,7 @@
     border: none;
     outline: none;
     flex  :1 ;
-    font-size: 14px;
+    font-size: 1px;
     padding: 0px 15px 0px 15px;
 }
 .chat-sender>div:nth-of-type(1)
@@ -81,3 +81,4 @@
     height: 70%;
     padding: 0px 15px 0px 15px;
 }
+

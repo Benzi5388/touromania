@@ -1,11 +1,13 @@
-body {
+/* body {
   background-image: linear-gradient(to bottom right, #f8f4eb, #ffffff);
-}
+} */
 
 /* ADMIN-HEADER COMPONENT */
 
 .mdbnavbar {
-  background-color: #f5e3c5;
+  /* background-color: #f5e3c5; */
+  background-color: #F2DBDF;
+
 }
 
 .mdbnavbar-brand {
@@ -37,9 +39,10 @@ body {
 /* *************************************************************************** */
 
 /* HEADER */
-
+ /* #EF9CAA */
 .header-navbar {
-  background-color: #f5e3c5 !important;
+  /* background-color: #f5e3c5 !important; */
+  background-color: #F2DBDF;
 }
 
 .header-navbar-brand {
@@ -62,15 +65,25 @@ body {
   padding: 15px !important;
   max-width: 450px !important;
   align-content: center !important;
-  margin-top: 120px !important;
+  margin-top: 70px !important;
   display: flex !important;
   justify-content: center !important;
+  margin-bottom: 85px !important;
+}
+
+.container{
+      padding-right: var(--mdb-gutter-x, 0rem) !important; 
+    padding-left: var(--mdb-gutter-x, 0rem) !important;
+}
+
+.row{
+  --mdb-gutter-x: 0;
 }
 
 .card-style {
   margin : auto;
   padding: 15px;
-  max-width: 1000px;
+  max-width: 1450px;
   align-content: center;
 }
 
@@ -90,6 +103,17 @@ body {
 
 .add-button {
   width: 100% !important;
+}
+
+.animation-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.login-animation {
+  width: 200px;
+  height: 245px;
 }
 
 /* ********************************************************************************** */

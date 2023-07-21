@@ -11,6 +11,7 @@ import Header from '../Components/Header';
 import {useNavigate } from 'react-router-dom';
 import '../App.css';
 import AdminHeader from '../Components/AdminHeader';
+import API from '../Axios/Api'
 
 function Description() {
   const dispatch = useDispatch()
@@ -26,7 +27,7 @@ function Description() {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      const response = await API.get(`/tour/?page=${currentPage}&search=${searchQuery}`);
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
       navigate('/adminhome')
@@ -38,7 +39,7 @@ function Description() {
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/users/${id}`);
+        const response = await API.get(`/users/${id}`);
         console.log(response.data, "res.data");
         dispatch(setTour(response.data));
         setIsLoading(false);

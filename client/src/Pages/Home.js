@@ -1,34 +1,39 @@
 import React, { useEffect, useState } from 'react';
-import { MDBCol, MDBContainer, MDBRow, MDBSpinner, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBCarousel, MDBCarouselItem, } from 'mdb-react-ui-kit';
+import { MDBCol, MDBContainer, MDBRow, MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
+
 
 import { useNavigate } from 'react-router-dom';
 import { setTours } from '../Redux/Features/tourSlice';
 import CardTour from '../Components/CardTour';
-import Header from '../Components/Header'
+import Header from '../Components/Header';
 import axios from 'axios';
 import '../App.css';
-import Banner from '../Components/Banner';
+import Lottie from "lottie-react";
+import plane from '../Assets/plane.json'
+import API from '../Axios/Api'
+
 
 
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const { tours, loading } = useSelector((state) => state.tour);
   const user = useSelector((state) => (state.auth.user))
-  const googleUser = useSelector((state) => (state.auth.googleData))
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortOption, setSortOption] = useState('recent');
 
-  console.log(user, "home page user");
+
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&sort=${sortOption}`);
+        const response = await API.get(`/tour/?page=${currentPage}&sort=${sortOption}`);
         dispatch(setTours(response.data.tours));
         setTotalPages(response.data.totalPages);
+        console.log(response.data.tours);
         setIsLoading(false);
       } catch (error) {
         console.error(error);
@@ -36,20 +41,29 @@ function Home() {
       }
     };
     fetchTourData();
-  }, [currentPage, sortOption, dispatch]);
+  }, [currentPage, sortOption, dispatch, user]);
 
-  useEffect(() => {
-    if (user) {
-      navigate('/'); // Navigate to the home route
-    }
-  }, [user, navigate]);
+
+
+  // useEffect(() => {
+  //   if (user?.login===false ) {
+  //     navigate('/login'); // Navigate to the home route
+  //   }
+  // }, [navigate]);
+
+  console.log(user, "home page user");
+
+
 
   if (isLoading || loading) {
     return (
       <>
-        <div className='spinner'>
-          <MDBSpinner grow size='big' />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <div style={{ width: '200px', height: '200px' }}>
+            <Lottie animationData={plane} />
+          </div>
         </div>
+
       </>
     );
   }
@@ -66,12 +80,12 @@ function Home() {
 
   const handleSortChange = (option) => {
     setSortOption(option);
+    console.log(option, "option");
   };
 
   return (
     <>
       <Header handleSearch={handleSearch} />
-      <Banner/>
       <div className='card-style' >
         <MDBRow className='mt-5'>
           {tours.length === 0 ? (
@@ -84,6 +98,7 @@ function Home() {
           ) : (
             <>
               <MDBCol >
+
                 <MDBContainer>
                   <div className='sort-dropdown'>
                     <label>Sort:</label>
@@ -93,13 +108,25 @@ function Home() {
                       onChange={(e) => handleSortChange(e.target.value)}
                       style={{ fontSize: '14px' }}
                     >
-                      <option value='recent' className="option_value">Date</option>
+                      <option value='recent' className="option_value">Date</option> {/* Make sure the value is 'recent' */}
                       <option value='likes' className="option_value">Likes</option>
                     </select>
                   </div>
-                  
-                  <MDBRow className='row-cols-1 row-cols-md-3 g-2'>
-                    {tours && tours.map((item, index) => <CardTour key={index} {...item} handleSortChange={handleSortChange} />)}
+                  {/* <div class="btn-group">
+                    <button type="button" class="btn btn-warning dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
+                      Action
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li><a class="dropdown-item" href="#">Separated link</a></li>
+                    </ul>
+                  </div> */}
+
+                  <MDBRow className='row-cols-1 row-cols-md-3 row-cols-lg-4 g-2'>
+                    {tours && tours.map((item, index) => <CardTour key={index} {...item} sortOption={sortOption} />)}
                   </MDBRow>
                 </MDBContainer>
               </MDBCol>
@@ -110,7 +137,7 @@ function Home() {
           <MDBRow className='pagination-row'>
             <MDBCol>
               <MDBContainer>
-                <nav aria-label='...'>
+                <nav style={{ marginBottom: "40px" }} aria-label='...'>
                   <MDBPagination circle className='mb-0'>
                     <MDBPaginationItem disabled={currentPage === 1}>
                       <MDBPaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
@@ -132,6 +159,7 @@ function Home() {
                   </MDBPagination>
                 </nav>
               </MDBContainer>
+
             </MDBCol>
           </MDBRow>
         )}

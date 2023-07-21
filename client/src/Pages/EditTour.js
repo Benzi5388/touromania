@@ -9,6 +9,7 @@ import axios from 'axios';
 import Header from '../Components/Header';
 import '../App.css'
 import { useParams } from 'react-router-dom';
+import API from '../Axios/Api'
 
 const EditTour = () => {
     const { id } = useParams();
@@ -25,21 +26,11 @@ const EditTour = () => {
     const navigate = useNavigate();
     const [location, setLocation] = useState('');
 
-    useEffect(() => {
-        const user = localStorage.getItem('user');
-        if (!user) {
-            navigate('/login'); // Navigate to the home route
-        }
-    }, [user, navigate]);
-
     const handleSubmit = (e) => {
         e.preventDefault();
         if (title && description) {
             const updatedTour = { title, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy, location };
-            console.log(tags, "tags");
-            console.log(updatedTour, "jjjjjjjjjj");
-
-            axios.post(`http://localhost:5000/tour/editTour/${id}`, updatedTour, {
+            API.post(`/tour/editTour/${id}`, updatedTour, {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
@@ -76,7 +67,7 @@ const EditTour = () => {
 
     useEffect(() => {
         // Fetch the selected tour based on the id
-        axios.get(`http://localhost:5000/tour/editTour/${id}`)
+        API.get(`/tour/editTour/${id}`)
             .then((response) => {
                 const tour = response.data
                 console.log(response.data, "hiiiiii");
@@ -86,6 +77,8 @@ const EditTour = () => {
                 setDescription(tour.description);
                 setTag(tour.tags);
                 setVideoUrl(tour.videoUrl);
+                setLocation(tour.location);
+                setPrivacy(tour.privacy);
             })
             .catch(() => {
                 toast.error('Failed to fetch tour');

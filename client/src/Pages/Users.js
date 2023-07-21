@@ -10,6 +10,7 @@ import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
 import '../App.css'
 import '../App.css'
+import API from '../Axios/Api'
 
 
 function Users() {
@@ -24,18 +25,18 @@ function Users() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const admin = JSON.parse(localStorage.getItem('admin'));
-    if (!admin) {
-      navigate('/adminLogin'); // Navigate to the admin login route
-    } else {
-      dispatch(setUser(admin)); // Update the admin state in Redux store
-    }
+    // const admin = JSON.parse(localStorage.getItem('admin'));
+    // if (!admin) {
+    //   navigate('/adminLogin'); // Navigate to the admin login route
+    // } else {
+    //   dispatch(setUser(admin)); // Update the admin state in Redux store
+    // }
 
     // Fetch users
     const fetchUsers = async () => {
       try {
           const admin = localStorage.getItem('admintoken');
-        const response = await axios.get(`http://localhost:5000/admin/users/?page=${currentPage}&search=${searchQuery}`, {
+        const response = await API.get(`/admin/users/?page=${currentPage}&search=${searchQuery}`, {
           headers: {
             'Authorization': `Bearer ${admin}`
           }}); 

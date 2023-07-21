@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav, MDBInputGroup, MDBInputGroupText, MDBInputGroupElement } from 'mdb-react-ui-kit';
 import { useSelector, useDispatch } from 'react-redux';
-import { setLogout, saveUserData } from '../Redux/Features/authSlice';
+import { setLogout, set} from '../Redux/Features/authSlice';
 import '../App.css';
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
+import API from '../Axios/Api'
 
 function Header({ handleSearch }) {
   const [show, setShow] = useState(false)
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate()
+  const user = useSelector((state) => (state.auth.user))
 
-  const handleLogout = async() =>{
+  const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/users/logout'); // Call the logout route on the server
-      // Perform any additional logout actions (e.g., clear local storage, redirect)
+      await axios.post('http://localhost:5000/users/logout');
+      navigate("/login")
       dispatch(setLogout())
     } catch (error) {
       console.error('Logout error:', error);
     }
-    
   }
 
   const handleSubmit = (e) => {
@@ -26,18 +29,18 @@ function Header({ handleSearch }) {
     handleSearch(searchQuery);
   };
 
-  useEffect(() => {
-    // Fetch user data from the Redux store directly
-    const userData = localStorage.getItem('userData');
-    const googleData = localStorage.getItem('googleData');
+  // if(user?.login===false){
+  //   return null;
+  // }
+  // useEffect(() => {
+  //   if (user?.login===false) {
+  //     navigate('/login'); // Navigate to the admin login route
+  //   }
+  // }, []);
 
-    if (userData ) {
-      dispatch(saveUserData(JSON.parse(userData)));
-    }
-  }, [dispatch]);
+  console.log(user?.login, "tttttttttt");
 
-  const user = useSelector((state) => (state.auth.user))
-  const googleUser = useSelector((state) => (state.auth.googleData))
+  console.log(user, "header user")
 
   return (
     <MDBNavbar className="header-navbar" fixed="top" expand="lg">
@@ -54,13 +57,13 @@ function Header({ handleSearch }) {
         </MDBNavbarToggler>
         <MDBCollapse show={show} navbar>
           <MDBNavbarNav right fullwidth={false} className="mb-2 mb-lg-0 justify-content-end">
-            {user?.id && <h5 className="navbar-nav">Welcome: {user?.name}</h5>}
+            {user?.login===true && <h5 className="navbar-nav">Welcome: {user?.name}</h5>}
             <MDBNavbarItem>
               <MDBNavbarLink href="/">
                 <p className="header-text">Home</p>
               </MDBNavbarLink>
             </MDBNavbarItem>
-            {user?.id && (
+            {user?.login===true && (
               <>
                 <MDBNavbarItem>
                   <MDBNavbarLink href="/addTour">
@@ -77,9 +80,26 @@ function Header({ handleSearch }) {
                     <p className="header-text">Chat</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                <MDBNavbarLink>
+                  <MDBNavbarItem>
+                    <form className='d-flex input-group w-auto'>
+                      <input
+                        type='text'
+                        className='form-control'
+                        placeholder='Search Tour'
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onFocus={(e) => e.preventDefault()}
+                      />
+                      <MDBInputGroupText>
+                        <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
+                      </MDBInputGroupText>
+                    </form>
+                  </MDBNavbarItem>
+                </MDBNavbarLink>
               </>
             )}
-            {user?.id ? (
+            {user?.login ===true? (
               <MDBNavbarItem>
                 <MDBNavbarLink href="/login">
                   <p onClick={handleLogout} className="header-text">
@@ -95,19 +115,7 @@ function Header({ handleSearch }) {
               </MDBNavbarItem>
             )}
           </MDBNavbarNav>
-          <form className='d-flex input-group w-auto'>
-            <input
-              type='text'
-              className='form-control'
-              placeholder='Search Tour'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={(e) => e.preventDefault()}
-            />
-            <MDBInputGroupText>
-                <MDBIcon icon="search" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
-              </MDBInputGroupText>
-          </form>
+
         </MDBCollapse>
       </MDBContainer>
     </MDBNavbar>

@@ -8,6 +8,7 @@ import Header from '../Components/Header';
 import '../App.css';
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
+import API from '../Axios/Api'
 
 
 function UserDashboard() {
@@ -33,7 +34,7 @@ function UserDashboard() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.get(`http://localhost:5000/tour/${tourId}`);
+          await API.get(`/tour/${tourId}`);
           dispatch(updateTour(tourId)); // Remove the deleted tour from Redux store
 
           Swal.fire(
@@ -51,7 +52,7 @@ function UserDashboard() {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/tour/?page=${currentPage}&search=${searchQuery}`);
+      const response = await API.get(`/tour/?page=${currentPage}&search=${searchQuery}`);
       dispatch(setToursByUser(response.data.tours));
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -62,7 +63,7 @@ function UserDashboard() {
   useEffect(() => {
     const fetchUserTours = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/tour/userDashboard/${userId}?page=${currentPage}`);
+        const response = await API.get(`/tour/userDashboard/${userId}?page=${currentPage}`);
         console.log(response.data, "rrrrrrrrrrrr");
         dispatch(setToursByUser(response.data.userTours));
         setTotalPages(response.data.totalPages);
@@ -89,7 +90,7 @@ function UserDashboard() {
 
   const excerpt = (str) => {
     if (str.length > 45) {
-      str = str.substring(0, 45) + "...";
+      str = str.substring(0, 30) + "...";
     }
     return str;
   };

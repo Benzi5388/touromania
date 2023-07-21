@@ -4,13 +4,11 @@ import { getTour, updateTour, setTours } from '../Redux/Features/tourSlice';
 import { MDBCol, MDBPaginationItem, MDBRow, MDBSpinner, MDBPaginationLink, MDBPagination, MDBContainer } from 'mdb-react-ui-kit';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminHeader from '../Components/AdminHeader';
-import { setUser } from '../Redux/Features/adminSlice';
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify';
 import '../App.css';
-import {API} from '../Redux/api'
-import { localeData } from 'moment';
+import API from '../Axios/Api'
 
 
 
@@ -28,18 +26,18 @@ function Tours() {
   const [endDate, setEndDate] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const admin = JSON.parse(localStorage.getItem('admin'));
-    if (!admin) {
-      navigate('/adminLogin'); // Navigate to the admin login route
-    } else {
-      dispatch(setUser(admin)); // Update the admin state in Redux store
-    }
-  }, [dispatch, navigate]);
+  // useEffect(() => {
+  //   const admin = JSON.parse(localStorage.getItem('admin'));
+  //   if (!admin) {
+  //     navigate('/adminLogin'); // Navigate to the admin login route
+  //   } else {
+  //     dispatch(setUser(admin)); // Update the admin state in Redux store
+  //   }
+  // }, [dispatch, navigate]);
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`http://localhost:5000/admin/tours/?page=${currentPage}&search=${searchQuery}`)
+      const response = await API.get(`/admin/tours/?page=${currentPage}&search=${searchQuery}`)
       dispatch(setTours(response.data.tours));
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -61,7 +59,8 @@ function Tours() {
   const handleEndDateChange = (event) => {
     const selectedDate = new Date(event.target.value);
     const currentDate = new Date();
-    if (selectedDate > currentDate) {
+    console.log(startDate, "startdate");
+    if (selectedDate > currentDate || selectedDate < startDate) {
       // Set the end date to the current date
       setEndDate(currentDate.toISOString().split('T')[0]);
     } else {
@@ -87,6 +86,7 @@ function Tours() {
   useEffect(() => {
     const fetchTourData = async () => {
       try {
+        console.log(API, "toooooooooooooo");
         const response = await axios.get(`http://localhost:5000/admin/tours/?page=${currentPage}`);
         dispatch(setTours(response.data.tours));
         setTotalPages(response.data.totalPages);

@@ -3,12 +3,14 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getUser } from "../Redux/api";
 import '../Pages/Chat/Chat.css'
+import Lottie from "lottie-react";
+import chaticon from '../Assets/chaticon.json'
 
 
 const Conversation = (props) => {
-  const { chats, data, currentUser, online }= props;
-    const user = JSON.parse(localStorage.getItem('user'));
+  const { data, currentUser, online }= props;
   const [userData, setUserData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch()
 
   useEffect(()=> {
@@ -16,6 +18,7 @@ const Conversation = (props) => {
     const getUserData = async ()=> {
           const response =await getUser(userId)
           setUserData(response.data)
+         setIsLoading(false)
           console.log(response.data, "the user dataaaaa");
     }
     getUserData();
@@ -26,16 +29,14 @@ const Conversation = (props) => {
       <div className="follower conversation">
         <div className="user-container">
           {online && <div className="online-dot"></div>}
-          <img
-            src={"/profilepic.jpg"}
-            alt="Profile"
-            className="followerImage"
-            style={{ width: "50px", height: "50px" }}
-          />
-          <div className="name" style={{ fontSize: '0.9rem' }}>
-            <span style={{ fontWeight: 'bold' }}>{userData?.name}</span>
-            <br />
-            <span style={{ color: online ? "#51e200" : "" }}>{online ? "Online" : "Offline"}</span>
+          <i style={{fontSize:"50px"}} class="fas fa-circle-user"></i>
+          <div className="name-container">
+            <div className="name" style={{ fontWeight: "bold" }}>
+              {userData?.name}
+            </div>
+            <div className="status" style={{ color: online ? "#51e200" : "" }}>
+              {online ? "Online" : "Offline"}
+            </div>
           </div>
         </div>
       </div>

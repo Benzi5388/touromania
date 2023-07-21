@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {MDBCard, MDBCardBody, MDBInput, MDBCardFooter,MDBValidation,MDBIcon, MDBSpinner, MDBBtn} from 'mdb-react-ui-kit';
-import { Link, useNavigate } from 'react-router-dom'; 
+import {MDBCard, MDBCardBody, MDBInput, MDBValidation,MDBIcon, MDBSpinner, MDBBtn} from 'mdb-react-ui-kit';
+import { useNavigate } from 'react-router-dom'; 
 import {useDispatch, useSelector} from 'react-redux';
 import { toast } from 'react-toastify';
 import { setUser } from '../Redux/Features/adminSlice';
 import '../App.css'
 import axios from 'axios'
+import API from '../Axios/Api'
 
 const initialState = {
     email : "",
@@ -15,6 +16,8 @@ function Login() {
     const [formValue, setFormValue] = useState(initialState)
     const {loading, error} = useSelector((state) =>({...state.auth}))
     const {email, password} = formValue;
+    const user = useSelector((state) => (state.admin.user))
+    console.log(user, "user");
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -22,14 +25,16 @@ function Login() {
        error && toast.error(error)
     }, [error]);
 
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (email && password) {
           // Make HTTP request to authenticate the user and receive the cookie
-          axios
-            .post('http://localhost:5000/admin/adminlogin', { email, password }, { withCredentials: true })
+          API
+            .post('/admin/adminLogin', { email, password }, { withCredentials: true })
             .then((response) => {
-              const user = { email };
+              console.log(response, "response");
+              const user =  {email} ;
               dispatch(setUser(user));
               toast.success('Logged in successfully!');
               navigate('/AdminDashboard');
@@ -40,6 +45,7 @@ function Login() {
             });
         }
       };
+
     const onInputChange = (e)=>{
        let {name, value} = e.target
        setFormValue({...formValue, [name] : value}) 
@@ -47,7 +53,7 @@ function Login() {
 
   return (
     <div className ="header-container" >
-        <MDBCard alignment='center'>
+        <MDBCard alignment='center'  style={{marginTop:"115px", marginBottom:"120px"}}>
             <MDBIcon fas icon = "user-circle" className='fa-2x'></MDBIcon>
             <h5>Sign In</h5>
             <MDBCardBody>

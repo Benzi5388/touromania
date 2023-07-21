@@ -14,8 +14,7 @@ export const signin = async (req, res) => {
         res.cookie('admin', adminToken, {
           httpOnly: true,
           secure: true,
-          sameSite: 'strict',
-          maxAge: 30 * 24 * 60 * 60 * 1000,
+          sameSite: 'strict'
         });
         res.status(201).json({ admin: adminToken });
       }
@@ -29,7 +28,7 @@ export const signin = async (req, res) => {
       // Clear the admin token cookie
       res.cookie('admin', '', {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: 'strict',
         expires: new Date(0),
       });
@@ -92,3 +91,16 @@ export const getUserCount = async (req, res) => {
     res.status(500).json({ message: 'Error fetching user count' });
   }
 };
+export const checkAdminLoggedIn = async (req, res) => {
+  try {
+      const token = req.cookies.admin;
+      console.log("token,",token)
+      if (!token)
+          return res.json({ loggedIn: false, error: true, message: "no token" });
+      const verifiedJWT = jwt.verify(token, secret);
+      return res.json({ adminData:{email:"admin@gmail.com"}, loggedIn: true, token });
+  } catch (err) {
+      console.log(err)
+      res.json({ loggedIn: false, error: err });
+  }
+}

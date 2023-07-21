@@ -9,6 +9,7 @@ import { saveUserData } from '../Redux/Features/authSlice';
 import axios from 'axios';
 import Header from '../Components/Header';
 import '../App.css'
+import API from '../Axios/Api'
 
 const AddEditTour = () => {
   const [title, setTitle] = useState('');
@@ -26,22 +27,15 @@ const AddEditTour = () => {
   const [privacy, setPrivacy] = useState('public');
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      navigate('/login'); // Navigate to the home route
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
     error && toast.error(error)
   }, [error]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && description) {
-      const updatedTourData = { title, location, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy }
+      const updatedTourData = { title, location, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy, isPremium : user?.isPremium, email : user?.email }
       console.log(user, "user");
-      axios.post("http://localhost:5000/tour/addtour", updatedTourData, {
+      API.post("/tour/addtour", updatedTourData, {
         headers: {
           'content-type': 'multipart/form-data'
         }

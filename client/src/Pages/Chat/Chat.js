@@ -8,67 +8,78 @@ import { useEffect } from "react";
 import { userChats } from "../../Redux/api";
 import { io } from "socket.io-client";
 import Header from "../../Components/Header";
-import { MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit';
-import { saveUserData  } from '../../Redux/Features/authSlice';
+import { saveUserData } from '../../Redux/Features/authSlice';
 import axios from 'axios';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import '../../Redux/api';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import Lottie from "lottie-react";
+import chatLoader from '../../Assets/chatLoader.json'
+import chaticon from '../../Assets/chaticon.json'
+import { getUser } from "../../Redux/api";
+import { useNavigate } from "react-router-dom";
 
 const Chat = () => {
   const socket = useRef();
-  const dispatch = useDispatch
-  // const user = useSelector((state) => (state.auth.user))
-  //  console.log(user, "user details");
-   const user = JSON.parse(localStorage.getItem('user'));
+  const dispatch = useDispatch;
+  const user = useSelector((state) => (state.auth.user))
+  console.log(user, "user details from chat page");
   const [chats, setChats] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [sendMessage, setSendMessage] = useState(null);
   const [receivedMessage, setReceivedMessage] = useState(null);
-  const[users, setUsers] = useState([])
+  const [isChatOpen, setIsChatOpen] = useState(true);
+  const navigate = useNavigate()
 
- useEffect(() => {
-  //  console.log("HELLOOOOO "+onlineUsers, currentChat, sendMessage, receivedMessage);
- }, [onlineUsers, sendMessage, receivedMessage])
- 
+  useEffect(() => {
+    //  console.log("HELLOOOOO "+onlineUsers, currentChat, sendMessage, receivedMessage);
+  }, [onlineUsers, sendMessage, receivedMessage])
 
+  // useEffect(() => {
+  //   if (user?.login===true) {
+  //     navigate('/chat'); // Navigate to the home route
+  //   }else{
+  //     navigate('/login');
+  //   }
+  // }, [user]);
+
+  // console.log(user, "chat page");
 
   // Get the chat in chat section
   useEffect(() => {
     const getChats = async () => {
       try {
-        const mainUser = await JSON.parse(localStorage.getItem('user'));
-        const { data } = await userChats(mainUser.id);
-
+        // const mainUser = await JSON.parse(localStorage.getItem('users'));
+        // console.log(mainUser, "mainuser");
+        // const { data } = await userChats(mainUser.id);
+        // setIsLoading(false);
+        // setChats(data);
+        const { data } = await userChats(user.id);
+        console.log(data, "dataaaa");
+        setIsLoading(false);
         setChats(data);
-        
       } catch (error) {
         console.log(error);
       }
     };
     getChats();
-  }, []);
+  }, [user]);
 
-  
-  useEffect(() => {
-    // console.log("Chats from outside",chats);
-  }, [chats]);
-  
 
   const handleSearch = async (searchQuery) => {
     try {
       const response = await axios.get(`http://localhost:5000/chat/?search=${searchQuery}`);
       const users = response.data.users;
-  
+
       const buttons = users.map((user, index) => {
         return {
           text: user.name,
           value: user._id,
         };
       });
-  
+
       Swal.fire({
         title: 'Users',
         icon: 'info',
@@ -79,7 +90,7 @@ const Chat = () => {
         html: getButtonsHtml(buttons),
         showConfirmButton: false,
       });
-  
+
       // Add event listeners to the custom buttons
       const buttonElements = document.getElementsByClassName('swal2-radio');
       for (let i = 0; i < buttonElements.length; i++) {
@@ -88,36 +99,37 @@ const Chat = () => {
           if (event.defaultPrevented) {
             return;
           }
-  
+
           // Prevent further event handling
           event.preventDefault();
-  
+
           const selectedUserId = buttonElements[i].querySelector('input[type="radio"]').value;
           const selectedUser = users.find(user => user._id === selectedUserId);
-  
+          console.log(selectedUser, "selected user");
+
           const chatData = {
             senderId: user.id, // Replace with actual sender ID
             receiverId: selectedUser._id,
           };
-          
+
           axios.post('http://localhost:5000/chat/', chatData)
             .then((response) => {
               // Chat created successfully
               console.log('Chat created:', response.data);
               const newChat = response.data;
 
-          // Update the chat list with the new chat
-          setChats(prevChats => [...prevChats, newChat]);
-  
+              // Update the chat list with the new chat
+              setChats(prevChats => [...prevChats, newChat]);
+
               // Perform any additional actions or UI updates as needed
             })
             .catch((error) => {
               // Error occurred while creating chat
               console.error('Error creating chat:', error);
-  
+
               // Display an error message or handle the error as required
             });
-  
+
           Swal.close();
         });
       }
@@ -125,7 +137,7 @@ const Chat = () => {
       console.error(error);
     }
   };
-  
+
   // Helper function to generate HTML for the custom buttons
   const getButtonsHtml = (buttons) => {
     const buttonsHtml = buttons.map((button) => {
@@ -136,22 +148,25 @@ const Chat = () => {
         </label>
       `;
     }).join('');
-  
+
     return `
       <div style="text-align: left;">
         ${buttonsHtml}
       </div>
     `;
   };
-  
-  
-  
-  
-  
+
+
+
+  const toggleChat = () => {
+    setIsChatOpen(!isChatOpen);
+  };
+
   // Connect to Socket.io
   useEffect(() => {
-    socket.current = io("ws://localhost:8800");
+    socket.current = io("ws://localhost:5000");
     socket.current.emit("new-user-add", user.id);
+    console.log(user.id, "userid");
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);
     });
@@ -159,7 +174,7 @@ const Chat = () => {
 
   // Send Message to socket server
   useEffect(() => {
-    if (sendMessage!==null) {
+    if (sendMessage !== null) {
       socket.current.emit("send-message", sendMessage);
     }
   }, [sendMessage]);
@@ -180,15 +195,28 @@ const Chat = () => {
 
 
   const checkOnlineStatus = (chats) => {
-    try{
+    try {
       const chatMember = chats?.members?.find((member) => member !== user.id);
-    const online = onlineUsers.find((user) => user.userId === chatMember);
-    return online ? true : false;
-    }catch(err){
+      const online = onlineUsers.find((user) => user.userId === chatMember);
+      return online ? true : false;
+    } catch (err) {
       console.log(err)
     }
   };
-  
+
+  if (isLoading) {
+    return (
+      <>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <div style={{ width: '200px', height: '200px' }}>
+            <Lottie animationData={chatLoader} />
+          </div>
+        </div>
+
+      </>
+    );
+  }
+
   // console.log(currentChat, "current chat");
   return (
     <>
@@ -198,7 +226,8 @@ const Chat = () => {
         <div className="Left-side-chat">
           {/* <LogoSearch /> */}
           <div className="Chat-container">
-            <h2>Chats</h2>
+            <span><Lottie style={{ width: "50px", height: "50px" }} animationData={chaticon} />
+              <h4>Chats</h4></span>
             <hr />
             <div className="Chat-list">
               {chats.length === 0 ? (
@@ -230,7 +259,7 @@ const Chat = () => {
             </div>
           </div>
         </div>
-  
+
         {/* Right Side */}
         <div className="Right-side-chat">
           <div className="Right-side-content">
@@ -246,13 +275,14 @@ const Chat = () => {
               />
             )}
           </div>
+
         </div>
       </div>
     </>
   );
-  
-  
-  
+
+
+
 };
 
 export default Chat;

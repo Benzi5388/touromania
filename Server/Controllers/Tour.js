@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 export const createTour = async (req, res) => {
   // const image = req.file.filename;
-  const { title, location, description, tags, videoUrl, name, creator } = req.body;
+  const { title, location, description, tags, videoUrl, name, creator, privacy, email, isPremium} = req.body;
   try {
     const image = [req.file.path]; // Assuming the uploaded image is stored in req.file
 
@@ -21,7 +21,9 @@ export const createTour = async (req, res) => {
       videoUrl,
       name,
       creator,
-      privacy
+      privacy,
+      isPremium,
+      email
     });
     newTour.save();
     res.json({ message: 'Tour added successfully' });
@@ -45,16 +47,12 @@ export const getTour = async (req, res) => {
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
 
-    console.log(endDate, "enddate");
-    console.log(startDate, "startdate");
     if (startDate && endDate) {
-      // Convert the start and end dates to ISO format
       const isoStartDate = new Date(startDate).toISOString();
       const isoEndDate = new Date(endDate).toISOString();
-
-      // Add the date filter to the search filters
       searchFilters.createdAt = { $gte: isoStartDate, $lte: isoEndDate };
     }
+    
     if (searchQuery) {
       searchFilters.$or = [
         { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
@@ -88,6 +86,7 @@ export const getTour = async (req, res) => {
       currentPage: page,
     });
   } catch (err) {
+    console.log(err)
     res.status(404).json({ message: "Something went wrong" })
   }
 }

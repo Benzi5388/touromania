@@ -1,19 +1,29 @@
-import React, { useState, useEffect  } from 'react'
-import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardImage, MDBCardGroup, MDBBtn, MDBIcon, MDBTooltip  } from 'mdb-react-ui-kit'
+import React, { useState, useEffect } from 'react'
+import { MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardImage, MDBCardGroup, MDBBtn, MDBIcon, MDBTooltip } from 'mdb-react-ui-kit'
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import '../App.css'
 import axios from 'axios';
 import { setNewTourState, setLikedTourIds } from '../Redux/Features/tourSlice';
 import { useSelector } from 'react-redux';
-import { Tooltip } from 'react-tooltip';
+import Swal from 'sweetalert2';
+import useRazorpay from "react-razorpay";
+import API from '../Axios/Api'
+import { toast } from 'react-toastify';
 
-function CardTour({ title, location, description, tags, _id, name, image, createdAt, likes, userId, privacy }) {
+
+
+function CardTour({ title, location, description, tags, _id, name, image, createdAt, likes, privacy, userId, creator, email, isPremium, sortOption }) {
+  const [Razorpay] = useRazorpay();
   const [liked, setLiked] = useState(false);
   const likedTourIds = useSelector(state => state.tour.likedTourIds);
   const user = useSelector(state => state.auth.user);
+  const id = creator
+  const userName = name;
+  const emailId = email
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const excerpt = (str) => {
     if (str.length > 45) {
       str = str.substring(0, 45) + "...";
@@ -27,87 +37,116 @@ function CardTour({ title, location, description, tags, _id, name, image, create
       return (
         <Link to="/login">
           <MDBIcon far icon="thumbs-up" />
-          &nbsp;{likes.length} Like{likes.length !== 1 ? 's' : ''}
+          &nbsp;Likes{likes.length}
         </Link>
       );
     }
-  
-    if (likes.length > 0) {
+    if (likes.length >= 0) {
       const likeCount = likes.length;
-      const includesUser = likes.includes(userId);
+      const includesUser = likes.includes(user.id);
       const liked = includesUser;
-  
       if (liked) {
         return (
           <>
             <MDBIcon fas icon='thumbs-up' />
             &nbsp;
-            {likeCount > 2 ? (
-              <MDBTooltip content={`You and ${likeCount - 1} others like this`}>
-                {likeCount}
-              </MDBTooltip>
-            ) : (
-              `${likeCount} Like${likeCount > 1 ? 's' : ''}`
-            )}
+            {likeCount}Likes
+          </>
+        );
+      } else {
+        return (
+          <>
+            <MDBIcon far icon='thumbs-up' />
+            &nbsp;{likeCount} Likes
           </>
         );
       }
     }
-  
+
     return (
       <>
-        {liked ? (
-          <MDBIcon fas icon='thumbs-up' style={{ color: 'blue' }} />
-        ) : (
-          <MDBIcon far icon='thumbs-up' />
-        )}
+        <MDBIcon icon={liked ? 'thumbs-up' : ['far', 'thumbs-up']} />
         &nbsp;{likes.length} Like{likes.length !== 1 ? 's' : ''}
       </>
     );
   };
-  
-  
-  
-
-  useEffect(() => {
-    const likedState = localStorage.getItem(`liked_${_id}`);
-    if (likedState) {
-      setLiked(JSON.parse(likedState));
-    } else {
-      // Check if the user ID is present in the likes array
-      if (likes.includes(userId)) {
-        setLiked(true);
-      }
-    }
-  }, [_id, likes, userId]);
 
   const handlelike = async () => {
     try {
-      const response = await axios.patch(`http://localhost:5000/tour/like/${_id}`);
+      if (user?.login === false) {
+        navigate('/login');
+        return;
+      }
+      const response = await API.patch(`/tour/like/${_id}`);
       const updatedTour = response.data;
-      console.log(updatedTour);
       const newLikedState = !liked;
       setLiked(newLikedState);
-      dispatch(setNewTourState(updatedTour));
-  
-      // Update the likedTourIds in Redux store
+      dispatch(setNewTourState({ tourId: _id, updatedTour }));
       const updatedLikedTourIds = newLikedState
         ? [...likedTourIds, _id]
         : likedTourIds.filter((tourId) => tourId !== _id);
       dispatch(setLikedTourIds(updatedLikedTourIds));
-  
       localStorage.setItem(`liked_${_id}`, JSON.stringify(newLikedState));
-      navigate('/');
     } catch (error) {
       console.error('Error liking tour:', error);
     }
   };
-  
-  
+
+  const handlePayment = async (params) => {
+    try {
+      const response = await API.post(`/users/payment/${id}`, { params });
+      const order = response.data.orderId;
+      const options = {
+        key: "rzp_test_Cvuio2xnzehdPu",
+        amount: "49900",
+        currency: "INR",
+        name: "Acme Corp",
+        description: "Test Transaction",
+        image: "../../public/favicon.ico",
+        order_id: order,
+        handler: function (response) {
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: 'Payment Successful',
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          axios.API(`/users/paymentSuccess/${id}`, { isPremium: true })
+            .then(() => {
+              toast.success("Congratulations!! You are now a premium member")
+            })
+            .catch((error) => {
+              toast.error("Something went rong.")
+            });
+        },
+        prefill: {
+          name: { userName },
+          email: { emailId },
+          contact: "9999999999",
+        },
+        notes: {
+          address: "Razorpay Corporate Office",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error("Error handling payment:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+        footer: '<a href="">Why do I have this issue?</a>',
+      });
+    }
+  };
 
   const imageUrl = `http://localhost:5000/uploads/${image}`;
   return (
-    
     <MDBCardGroup>
       <MDBCard className='h-100 mt-3 d-sm-flex mdb-card'>
         <MDBCardImage
@@ -117,10 +156,25 @@ function CardTour({ title, location, description, tags, _id, name, image, create
           position='top'
         />
         <div className='top-left'>{name}</div>
-        <span className='text-start tag-card'>{tags.map((item) => `#${item}`)}
-          <MDBBtn style={{ float: "right" }} tag="a" color='none' onClick={handlelike}>
-            <Likes />
-          </MDBBtn>
+        <div className='top-right'>{privacy === 'private' && (
+          <div className='top-right'>
+            <i className='fas fa-crown'></i>
+          </div>
+        )}</div>
+        <span className='text-start tag-card'>
+          <div>
+            <span className='location bold-text'>
+              <i className='fas fa-map-marker-alt'></i>
+              &nbsp;{/* Add a non-breaking space */}
+              {location}
+              <MDBBtn style={{ float: "right" }} tag="a" color='none' onClick={handlelike}>
+                <Likes />
+              </MDBBtn>
+            </span>
+          </div>
+          <div>
+            {tags.map((item) => `#${item}`)}
+          </div>
           <div>
             <span className='created-at'>
               <i className='far fa-calendar-alt'></i>
@@ -128,23 +182,41 @@ function CardTour({ title, location, description, tags, _id, name, image, create
               {new Date(createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           </div>
-          <div>
-            <span className='location bold-text'>
-              <i className='fas fa-map-marker-alt'></i>
-              &nbsp;{/* Add a non-breaking space */}
-              {location}
-            </span>
-          </div>
         </span>
-        <MDBCardBody >
+        <MDBCardBody>
           <MDBCardTitle className='text-start'>{title}</MDBCardTitle>
-          <MDBCardText className='text-start'>{excerpt(description)}
-            <Link to={`/tour/${_id}`}>...Read More</Link>
+          <MDBCardText className='text-start'>
+            {excerpt(description)}
+            {
+              privacy === 'private' && !user.isPremium && user?.login===true ? (
+                <Link
+                  to={'/'}
+                  onClick={() => {
+                    Swal.fire({
+                      title: 'Become a Premium Member!',
+                      text: 'This blog is available for premium members only. Upgrade to our Premium membership for just Rs.499 and unlock access to exclusive tours.',
+                      icon: 'info',
+                      showCancelButton: true,
+                      cancelButtonText: 'Cancel',
+                      confirmButtonText: 'Upgrade',
+                      reverseButtons: true
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handlePayment()
+                      }
+                    });
+                  }}
+                >
+                  ...Read More
+                </Link>
+              ) : (
+                <Link to={`/tour/${_id}`}>...Read More</Link>
+              )}
           </MDBCardText>
         </MDBCardBody>
       </MDBCard>
     </MDBCardGroup>
-  )
+  );
 }
 
 export default CardTour

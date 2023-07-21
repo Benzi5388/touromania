@@ -50,9 +50,11 @@ const tourSlice = createSlice({
       if (existingTour) {
         existingTour.likes = updatedTour.likes; // Update the like count in the existingTour
       }
+      console.log(action.payload, "liked state"); // Logging the action payload
     },
     setLikedTourIds: (state, action) => {
       state.likedTourIds = action.payload;
+      console.log(action.payload, "liked ids"); // Logging the action payload
     },
   },
 });

@@ -7,7 +7,10 @@ import { verify, resendOTP, register } from '../Redux/Features/authSlice';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Header from '../Components/Header';
-import '../App.css'
+import '../App.css';
+import loginanimation from "../Assets/loginanimation.json"
+import Lotie from 'lottie-react';
+import API from '../Axios/Api'
 
 
 const initialState = {
@@ -22,6 +25,7 @@ function VerifyOtp() {
   const [token, setToken] = useState('');
   const [timer, setTimer] = useState(60);
   const [resendDisabled, setResendDisabled] = useState(false);
+  const [isOTPVerified, setIsOTPVerified] = useState(false);
   console.log(email, "this is the email");
   const { otp } = formValue;
   const dispatch = useDispatch();
@@ -47,7 +51,21 @@ function VerifyOtp() {
     }
     if (otp) {
       try {
-          navigate('/resetPassword');
+        try {
+          // Call the OTP verification API with the entered OTP
+          const response = await API.post('/users/verifyOtp', { email, otp });
+  
+          // If the OTP is verified successfully
+          if (response.status === 200) {
+            setIsOTPVerified(true); // Set the OTP verification status to true
+            toast.success("OTP verified successfully!");
+            navigate('/resetPassword')
+          } else {
+            toast.error("Incorrect OTP. Please try again.");
+          }
+        } catch (error) {
+          toast.error("Error verifying OTP");
+        }
           toast.success("Reset your password");
       } catch (error) {
         toast.error("Incorrect value");
@@ -60,11 +78,9 @@ function VerifyOtp() {
     setResendDisabled(true);
     setIsResending(true);
     try {
-      const response = await axios.post('http://localhost:5000/users/verifyOtp', { email:email });
-      console.log(response.data);
+      const response = await API.post('/users/verifyOtp', { email:email });
       setIsResending(false);
       const { otp } = response.data;
-      console.log(otp, "3333333333"); // Retrieve the OTP value from the response
       setFormValue((prevValues) => ({
       ...prevValues,
       otp: otp, // Update the OTP value in the form
@@ -87,10 +103,12 @@ function VerifyOtp() {
 
   return (
     <>
-    <div className='header-container'
-    >
+    <Header/>
+    <div className='header-container'>
       <MDBCard alignment="center">
-        <MDBIcon fas icon="user-circle" className="fa-2x"></MDBIcon>
+      <div className="animation-container">
+            <Lotie animationData={loginanimation} className="login-animation" />
+          </div>
         <h5>OTP</h5>
         <MDBCardBody>
           <MDBValidation onSubmit={handleSubmit} noValidate className="row g-3">
