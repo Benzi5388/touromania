@@ -17,7 +17,7 @@ import { Server } from 'socket.io';
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000"]
+    origin: ["http://localhost:3000","https://touro.unitedwestand.online/"]
   },
 });
 
@@ -81,7 +81,7 @@ app.use('/uploads', express.static('public/uploads'));
 
 // app.use(cors(corsOptions));
 
-app.use(cors({origin:["http://localhost:3000"], credentials:true}))
+app.use(cors({origin:["http://localhost:3000","https://touro.unitedwestand.online/"], credentials:true}))
 
 // Set COOP headers in your Express app
 
