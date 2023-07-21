@@ -101,7 +101,7 @@ function Header({ handleSearch }) {
             )}
             {user?.login ===true? (
               <MDBNavbarItem>
-                <MDBNavbarLink href="/login">
+                <MDBNavbarLink onClick={(e)=>e.preventDefault()}>
                   <p onClick={handleLogout} className="header-text">
                     Logout
                   </p>
