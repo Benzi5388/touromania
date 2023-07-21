@@ -16,7 +16,7 @@ function Header({ handleSearch }) {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/users/logout');
+      await API.post('/users/logout');
       navigate("/login")
       dispatch(setLogout())
     } catch (error) {
