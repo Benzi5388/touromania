@@ -40,6 +40,8 @@ function Home() {
     fetchTourData();
   }, [currentPage, sortOption, dispatch, user]);
 
+  
+
   if (isLoading || loading) {
     return (
       <>

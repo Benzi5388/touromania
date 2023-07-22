@@ -54,10 +54,10 @@ function Login() {
 
 
   useEffect(() => {
-    if (user?.login===false) {
-      navigate('/login'); // Navigate to the home route
+    if (user.login) {
+      navigate('/'); // Navigate to the home route
     }
-  }, [ navigate]);
+  }, [ user]);
 
   const handleGoogleLogin = async (e) => {
     e.preventDefault();
