@@ -83,7 +83,7 @@ function Home() {
             <>
               <MDBCol >
                 <MDBContainer>
-                  <div className='sort-dropdown'>
+                  {/* <div className='sort-dropdown'>
                     <label>Sort:</label>
                     <select
                       className='form-select form-select-sm'
@@ -94,7 +94,7 @@ function Home() {
                       <option value='recent' className="option_value">Date</option>
                       <option value='likes' className="option_value">Likes</option>
                     </select>
-                  </div>
+                  </div> */}
                   <MDBRow className='row-cols-1 row-cols-md-3 row-cols-lg-4 g-2'>
                     {tours && tours.map((item, index) => <CardTour key={index} {...item} sortOption={sortOption} />)}
                   </MDBRow>
