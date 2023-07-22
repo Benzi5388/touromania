@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MDBIcon, MDBNavbar, MDBContainer, MDBNavbarBrand, MDBNavbarToggler, MDBCollapse, MDBNavbarItem, MDBNavbarLink, MDBNavbarNav, MDBInputGroup, MDBInputGroupText, MDBInputGroupElement } from 'mdb-react-ui-kit';
-import { useSelector, useDispatch } from 'react-redux';
-import { setLogout, set} from '../Redux/Features/authSlice';
+import { useSelector, useDispatch} from 'react-redux';
+import { setLogout} from '../Redux/Features/authSlice';
 import '../App.css';
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import API from '../Axios/Api'
 
 function Header({ handleSearch }) {
@@ -25,22 +24,9 @@ function Header({ handleSearch }) {
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevents the default form submission
+    e.preventDefault();
     handleSearch(searchQuery);
   };
-
-  // if(user?.login===false){
-  //   return null;
-  // }
-  // useEffect(() => {
-  //   if (user?.login===false) {
-  //     navigate('/login'); // Navigate to the admin login route
-  //   }
-  // }, []);
-
-  console.log(user?.login, "tttttttttt");
-
-  console.log(user, "header user")
 
   return (
     <MDBNavbar className="header-navbar" fixed="top" expand="lg">
@@ -65,21 +51,27 @@ function Header({ handleSearch }) {
             </MDBNavbarItem>
             {user?.login===true && (
               <>
+              <Link to="/addTour">
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/addTour">
+                  <MDBNavbarLink>
                     <p className="header-text">Add Tour</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                </Link>
+                <Link to="/UserDashboard">
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/UserDashboard">
+                  <MDBNavbarLink>
                     <p className="header-text">Dashboard</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                </Link>
+                <Link to="/chat">
                 <MDBNavbarItem>
-                  <MDBNavbarLink href="/chat">
+                  <MDBNavbarLink>
                     <p className="header-text">Chat</p>
                   </MDBNavbarLink>
                 </MDBNavbarItem>
+                </Link>
                 <MDBNavbarLink>
                   <MDBNavbarItem>
                     <form className='d-flex input-group w-auto'>
@@ -108,11 +100,13 @@ function Header({ handleSearch }) {
                 </MDBNavbarLink>
               </MDBNavbarItem>
             ) : (
+              <Link to="/login">
               <MDBNavbarItem>
-                <MDBNavbarLink href="/login">
+                <MDBNavbarLink>
                   <p className="header-text">Login</p>
                 </MDBNavbarLink>
               </MDBNavbarItem>
+              </Link>
             )}
           </MDBNavbarNav>
 

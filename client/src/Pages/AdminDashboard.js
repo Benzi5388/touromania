@@ -16,7 +16,15 @@ const AdminDashboard = () => {
   const [nonPremuimCount, setnonPremuimCount] = useState(0);
   const user = useSelector((state) => (state.admin.user))
   const navigate = useNavigate()
-  console.log(user,"userrr");
+  // console.log(user,"userrr");
+  // useEffect(()=>{
+  //   console.log("inside useffect", user)
+  //   if(user.login==false){
+  //     console.log("inside login condition")
+  //     navigate("/adminLogin")
+  //   }
+  // },[user])
+ 
   const dispatch = useDispatch()
 
   const fetchTourData = async () => {
@@ -49,7 +57,7 @@ const AdminDashboard = () => {
     if (user) {
       fetchTourData();
       fetchUserData();
-      navigate('/AdminDashboard')
+      // navigate('/AdminDashboard')
     }
   }, []);
   
@@ -68,8 +76,9 @@ const AdminDashboard = () => {
   return (
     <>
     <AdminHeader />
+    {user.login==false && <Navigate to="/adminLogin"/>}
     <div className="container" style={{marginTop:"70px"}}>
-      <h1 className="mt-4" >Dashboard</h1>
+      <h1 className="mt-4" >Dashboard {user?.login==false && "hgsajahs"}</h1>
       <div className="row justify-content-center mt-4">
         <div className="col-12 col-sm-6 col-md-4 mb-3">
           <div className="bg-light rounded d-flex align-items-center p-4">

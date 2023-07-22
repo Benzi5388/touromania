@@ -6,9 +6,7 @@ import axios from 'axios'
 import dotenv from 'dotenv'
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { log } from 'console';
 import useRazorpay from "razorpay";
-import { async } from 'react-input-emoji';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -373,8 +371,8 @@ export const createOrder = async (req, res) => {
 
 export const paymentSuccess = async (req, res) => {
   try {
-    const id = req.params.id;
-    const updatedUser = await UserModel.findByIdAndUpdate(id, { isPremium: true }, { new: true });
+    const id = req.body.id;
+    const updatedUser = await UserModel.findByIdAndUpdate(id, { $set:{ isPremium: true} }, { new: true });
 
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });

@@ -32,7 +32,7 @@ function AdminHeader({handleSearch}) {
     };
 
     useEffect(() => {
-      if (admin?.user?.login==false) {
+      if (admin?.user?.login===false) {
         navigate('/adminLogin'); // Navigate to the admin login route
       }
     }, [dispatch, navigate]);
@@ -62,9 +62,11 @@ function AdminHeader({handleSearch}) {
                 </Link>
               </MDBNavbarItem>
               <MDBNavbarItem>
-                <MDBNavbarLink href="/tours">
+                <Link to="/tours">
+                <MDBNavbarLink>
                   <p className="header-text">Tours</p>
                 </MDBNavbarLink>
+                </Link>
               </MDBNavbarItem>
               <MDBNavbarItem>
                 <Link to="/users">

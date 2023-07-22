@@ -12,7 +12,8 @@ const tourSlice = createSlice({
     selectedTour: null, // Add selectedTour property
     usertours: null,
     newTourState: null,
-    likedTourIds: []
+    likedTourIds: [],
+    refresh:false
   },
   reducers: {
     setTours: (state, action) => {
@@ -22,6 +23,9 @@ const tourSlice = createSlice({
 
       // Store the updated tour data in localStorage
       localStorage.setItem('tours', JSON.stringify(action.payload));
+    },
+    setRefresh:(state)=>{
+      state.refresh= !state.refresh
     },
     getTour: (state) => {
       state.loading = true;
@@ -59,6 +63,6 @@ const tourSlice = createSlice({
   },
 });
 
-export const { setTours, getTour, updateTour, setTour, setToursByUser, setNewTourState, setLikedTourIds } = tourSlice.actions;
+export const { setTours, getTour,setRefresh, updateTour, setTour, setToursByUser, setNewTourState, setLikedTourIds } = tourSlice.actions;
 
 export default tourSlice.reducer;

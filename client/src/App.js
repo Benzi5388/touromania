@@ -39,13 +39,16 @@ function App() {
   const email = JSON.parse(localStorage.getItem('email'));
   const admin = useSelector((state) => (state.admin.user))
   const user = useSelector((state) => (state.auth.user))
+  const refresh = useSelector(state=>state.tour.refresh)
   const navigate = useNavigate()
   const location = useLocation();
   
 
   useEffect(() => {
     (async function () {
-      const { data } = await API.get("/users/login/check");
+      try{
+        const { data } = await API.get("/users/login/check");
+     
       const exemptedRoutes = [ '/register', '/forgotPassword', '/resetPassword', '/otp','/verifyOTP','/resendOTP'];
       if (exemptedRoutes.includes(location.pathname)) {
         return; // Skip the login check for these routes
@@ -69,9 +72,12 @@ function App() {
       //     dispatch(saveUserData({...data.userData, id:data.userData._id}))
       //   }
       // }
+    }catch(err){
+      console.log(err)
+    }
     })()
 
-  }, [dispatch,navigate, location]);
+  }, [dispatch,navigate, location, refresh]);
 
   // useEffect(()=>{
   //   if(user)

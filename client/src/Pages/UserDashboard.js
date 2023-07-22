@@ -64,7 +64,6 @@ function UserDashboard() {
     const fetchUserTours = async () => {
       try {
         const response = await API.get(`/tour/userDashboard/${userId}?page=${currentPage}`);
-        console.log(response.data, "rrrrrrrrrrrr");
         dispatch(setToursByUser(response.data.userTours));
         setTotalPages(response.data.totalPages);
         setIsLoading(false);
@@ -109,7 +108,7 @@ function UserDashboard() {
         </h4>
 
         <h6 className='text-center text-muted'>E-mail : {user?.email}</h6>
-        <hr style={{ maxWidth: "570px" }} />
+        <hr  />
         {usertours.length === 0 && (
           <MDBCol className='text-center'>
             <div className="no-tour-container">

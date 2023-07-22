@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import '../App.css'
 import axios from 'axios';
-import { setNewTourState, setLikedTourIds } from '../Redux/Features/tourSlice';
+import { setNewTourState, setLikedTourIds, setRefresh } from '../Redux/Features/tourSlice';
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import useRazorpay from "react-razorpay";
@@ -18,7 +18,9 @@ function CardTour({ title, location, description, tags, _id, name, image, create
   const [liked, setLiked] = useState(false);
   const likedTourIds = useSelector(state => state.tour.likedTourIds);
   const user = useSelector(state => state.auth.user);
-  const id = creator
+  const id = user._id;
+  const memberShip = user.isPremium
+  console.log(user)
   const userName = name;
   const emailId = email
   const navigate = useNavigate();
@@ -33,7 +35,6 @@ function CardTour({ title, location, description, tags, _id, name, image, create
 
   const Likes = () => {
     if (!user) {
-      // User does not exist, redirect to login page
       return (
         <Link to="/login">
           <MDBIcon far icon="thumbs-up" />
@@ -94,6 +95,7 @@ function CardTour({ title, location, description, tags, _id, name, image, create
 
   const handlePayment = async (params) => {
     try {
+      
       const response = await API.post(`/users/payment/${id}`, { params });
       const order = response.data.orderId;
       const options = {
@@ -112,11 +114,13 @@ function CardTour({ title, location, description, tags, _id, name, image, create
             showConfirmButton: false,
             timer: 1500,
           });
-          axios.API(`/users/paymentSuccess/${id}`, { isPremium: true })
+          API.post('/users/paymentSuccess', { isPremium: true, id })
             .then(() => {
+              dispatch(setRefresh({}))
               toast.success("Congratulations!! You are now a premium member")
             })
             .catch((error) => {
+              console.log(error)
               toast.error("Something went rong.")
             });
         },

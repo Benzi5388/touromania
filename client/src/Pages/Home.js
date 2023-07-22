@@ -13,8 +13,6 @@ import Lottie from "lottie-react";
 import plane from '../Assets/plane.json'
 import API from '../Axios/Api'
 
-
-
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,7 +23,6 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortOption, setSortOption] = useState('recent');
-
 
   useEffect(() => {
     const fetchTourData = async () => {
@@ -43,18 +40,6 @@ function Home() {
     fetchTourData();
   }, [currentPage, sortOption, dispatch, user]);
 
-
-
-  // useEffect(() => {
-  //   if (user?.login===false ) {
-  //     navigate('/login'); // Navigate to the home route
-  //   }
-  // }, [navigate]);
-
-  console.log(user, "home page user");
-
-
-
   if (isLoading || loading) {
     return (
       <>
@@ -63,7 +48,6 @@ function Home() {
             <Lottie animationData={plane} />
           </div>
         </div>
-
       </>
     );
   }
@@ -98,7 +82,6 @@ function Home() {
           ) : (
             <>
               <MDBCol >
-
                 <MDBContainer>
                   <div className='sort-dropdown'>
                     <label>Sort:</label>
@@ -108,23 +91,10 @@ function Home() {
                       onChange={(e) => handleSortChange(e.target.value)}
                       style={{ fontSize: '14px' }}
                     >
-                      <option value='recent' className="option_value">Date</option> {/* Make sure the value is 'recent' */}
+                      <option value='recent' className="option_value">Date</option>
                       <option value='likes' className="option_value">Likes</option>
                     </select>
                   </div>
-                  {/* <div class="btn-group">
-                    <button type="button" class="btn btn-warning dropdown-toggle" data-mdb-toggle="dropdown" aria-expanded="false">
-                      Action
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li><a class="dropdown-item" href="#">Separated link</a></li>
-                    </ul>
-                  </div> */}
-
                   <MDBRow className='row-cols-1 row-cols-md-3 row-cols-lg-4 g-2'>
                     {tours && tours.map((item, index) => <CardTour key={index} {...item} sortOption={sortOption} />)}
                   </MDBRow>
@@ -159,16 +129,12 @@ function Home() {
                   </MDBPagination>
                 </nav>
               </MDBContainer>
-
             </MDBCol>
           </MDBRow>
         )}
       </div>
-
     </>
   );
-
-
 }
 
 export default Home;

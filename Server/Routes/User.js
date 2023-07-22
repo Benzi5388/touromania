@@ -21,7 +21,7 @@ router.post('/resetPassword', resetPassword)
 router.get('/:id', getSingleTour)
 router.post('/logout', logOut)
 router.post('/payment/:id', createOrder)
-router.post('/paymentSuccess/:id', paymentSuccess)
+router.post('/paymentSuccess', paymentSuccess)
 
 
 // router.get('/profile', getUsers)
