@@ -15,6 +15,8 @@ const app = express();
 import http from 'http';
 import { Server } from 'socket.io';
 const server = http.createServer(app);
+import notFoundMiddleware from './Middleware/404.js'
+
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:3000","https://touro.unitedwestand.online/"]
@@ -63,47 +65,16 @@ app.use(express.static(path.resolve()+'/public'))
 
 dotenv.config();
 
-
 app.use('/uploads', express.static('public/uploads'));
-
-// const allowedOrigins = ['http://localhost:3000', 'https://accounts.google.com'];
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (allowedOrigins.includes(origin) || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-// };
-
-// app.use(cors(corsOptions));
 
 app.use(cors({origin:["http://localhost:3000","https://touro.unitedwestand.online/"], credentials:true}))
 
-// Set COOP headers in your Express app
-
-// app.use((req, res, next) => {
-//     res.set("Cross-Origin-Opener-Policy", 'same-origin');
-//     next();
-//   });
-
-
-
-  // app.use((req, res, next) => {
-  //   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  //   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-  //   next();
-  // });
-
-  
 app.use('/users', userRouter);
 app.use('/tour', tourRouter);
 app.use('/admin', adminRouter);
 app.use('/chat', chatRouter);
 app.use('/message',MessageRouter )
+app.use(notFoundMiddleware);
 
 
 mongoose.set("strictQuery", false)

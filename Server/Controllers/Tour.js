@@ -38,8 +38,9 @@ export const createTour = async (req, res) => {
 
 export const getTour = async (req, res) => {
   try {
+    const sortOption = req.query.sort;
     const page = parseInt(req.query.page) || 1;
-    const limit = 6;
+    const limit = 8;
     const skip = (parseInt(page) - 1) * limit;
 
     const searchQuery = req.query.search;
@@ -52,33 +53,38 @@ export const getTour = async (req, res) => {
       const isoEndDate = new Date(endDate).toISOString();
       searchFilters.createdAt = { $gte: isoStartDate, $lte: isoEndDate };
     }
-    
+
     if (searchQuery) {
       searchFilters.$or = [
-        { title: { $regex: searchQuery, $options: 'i' } }, // Case-insensitive search on tour name
-        { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } }, // Case-insensitive search on tags
+        { title: { $regex: searchQuery, $options: 'i' } },
+        { tags: { $elemMatch: { $regex: searchQuery, $options: 'i' } } },
         { name: { $regex: `^${searchQuery}`, $options: 'i' } },
         { location: { $regex: `^${searchQuery}`, $options: 'i' } }
       ];
     }
 
-    const sortOption = req.query.sort || 'recent';
-    const sortQuery = {};
-
-    if (sortOption === 'recent') {
-      sortQuery.createdAt = -1; // Sort by descending createdAt
-    } else if (sortOption === 'likes') {
-      sortQuery.likeCount = -1; // Sort by descending likeCount
-    }
-
     const totalTours = await TourModel.countDocuments(searchFilters);
     const totalPages = Math.ceil(totalTours / limit);
 
-    const tours = await TourModel.find(searchFilters)
-      .sort(sortQuery)
-      .skip(skip)
-      .limit(limit)
-      .exec();
+    // Fetch all the tours based on the search filters
+    const allTours = await TourModel.find(searchFilters).exec();
+
+    // Calculate the number of likes for each tour and create a new array with likesCount
+    const toursWithLikesCount = allTours.map((tour) => ({
+      ...tour.toObject(),
+      likesCount: tour.likes.length // Calculate the number of likes (length of the likes array)
+    }));
+
+    // Sort the tours based on the calculated likesCount if the sortOption is 'likes'
+    if (sortOption === 'likes') {
+      toursWithLikesCount.sort((a, b) => b.likesCount - a.likesCount);
+    } else {
+      // For other sorting options (e.g., 'recent'), sort based on the 'createdAt' field
+      toursWithLikesCount.sort((a, b) => b.createdAt - a.createdAt);
+    }
+
+    // Apply pagination to the sorted array
+    const tours = toursWithLikesCount.slice(skip, skip + limit);
 
     res.status(200).json({
       tours,
@@ -86,13 +92,17 @@ export const getTour = async (req, res) => {
       currentPage: page,
     });
   } catch (err) {
-    console.log(err)
-    res.status(404).json({ message: "Something went wrong" })
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
   }
-}
+};
+
+
+
 
 export const getSingleTour = async (req, res) => {
   const id = req.params.id
+  console.log(id, "iddd");
   try {
     const tour = await TourModel.findById(id)
     console.log(tour, "trip");

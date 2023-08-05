@@ -19,7 +19,8 @@ const tourSchema = mongoose.Schema({
     creator: String,
     tags: [String],
     image: {
-        type: String
+        type: String,
+        required:true
     },
     videoUrl: String,
     likes: {
