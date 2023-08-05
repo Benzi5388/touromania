@@ -13,14 +13,12 @@ import { toast } from 'react-toastify';
 
 
 
-function CardTour({ title, location, description, tags, _id, name, image, createdAt, likes, privacy, userId, creator, email, isPremium, sortOption }) {
+function CardTour({ title, location, description, tags, _id, name, image, createdAt, likes, privacy, email}) {
   const [Razorpay] = useRazorpay();
   const [liked, setLiked] = useState(false);
   const likedTourIds = useSelector(state => state.tour.likedTourIds);
   const user = useSelector(state => state.auth.user);
   const id = user._id;
-  const memberShip = user.isPremium
-  console.log(user)
   const userName = name;
   const emailId = email
   const navigate = useNavigate();

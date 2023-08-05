@@ -32,7 +32,7 @@ const AddEditTour = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title && description) {
+    if (title && description && file && location) {
       const updatedTourData = { title, location, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy, isPremium : user?.isPremium, email : user?.email }
       console.log(user, "user");
       API.post("/tour/addtour", updatedTourData, {
@@ -91,6 +91,7 @@ const AddEditTour = () => {
                   onChange={(e) => setTitle(e.target.value)}
                   className='form-control'
                   invalid
+                  required
                   validation='Please provide title'
                 />
               </div>
@@ -101,6 +102,7 @@ const AddEditTour = () => {
                   name='location'
                   onChange={(e) => setLocation(e.target.value)}
                   className='form-control'
+                  required
                   invalid
                   value={location}
                   validation='Please provide location'
@@ -116,6 +118,7 @@ const AddEditTour = () => {
                   style={{ height: '100px' }}
                   className='form-control'
                   invalid
+                  required
                   validation='Please provide some description'
                 />
               </div>
@@ -141,7 +144,13 @@ const AddEditTour = () => {
                 />
               </div>
               <div className="d-flex justify-content-start">
-                <input type="file" name="file" onChange={(e) => setImage(e.target.files[0])} className='mt-4 mb-2' accept='image/*' />
+                <input 
+                type="file" 
+                name="file" 
+                onChange={(e) => setImage(e.target.files[0])} 
+                className='mt-4 mb-2' 
+                required  
+                accept='image/*' />
               </div>
               <div className="col-12">
                 {/* Radio buttons for privacy selection */}

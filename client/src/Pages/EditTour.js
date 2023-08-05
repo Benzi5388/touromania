@@ -20,7 +20,6 @@ const EditTour = () => {
     const [tags, setTag] = useState([]);
     const [selectedTour, setSelectedTour] = useState(null);
     const [privacy, setPrivacy] = useState(false);
-    console.log(id, "uuuuuuuuuuu");
     const user = useSelector((state) => (state.auth.user))
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -28,7 +27,7 @@ const EditTour = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (title && description) {
+        if (title && description && file && location) {
             const updatedTour = { title, description, file, tags, videoUrl, name: user?.name, creator: user?.id, privacy, location };
             API.post(`/tour/editTour/${id}`, updatedTour, {
                 headers: {
@@ -36,7 +35,6 @@ const EditTour = () => {
                 }
             })
                 .then((response) => {
-                    console.log(response.data, "oooooooooo");
                     dispatch(updateTour(response.data));
                     toast.success("Tour updated Successfully!!");
                     navigate('/userDashboard');
@@ -70,8 +68,6 @@ const EditTour = () => {
         API.get(`/tour/editTour/${id}`)
             .then((response) => {
                 const tour = response.data
-                console.log(response.data, "hiiiiii");
-                // Set the state values with the existing values of the selected tour
                 setSelectedTour(tour);
                 setTitle(tour.title);
                 setDescription(tour.description);
@@ -101,6 +97,7 @@ const EditTour = () => {
                                     onChange={(e) => setTitle(e.target.value)}
                                     className='form-control'
                                     invalid
+                                    required
                                     validation='Please provide title'
                                 />
                             </div>
@@ -112,6 +109,7 @@ const EditTour = () => {
                                     onChange={(e) => setLocation(e.target.value)}
                                     className='form-control'
                                     invalid
+                                    required
                                     value={location}
                                     validation='Please provide location'
                                 />
@@ -125,6 +123,7 @@ const EditTour = () => {
                                     onChange={(e) => setDescription(e.target.value)}
                                     className='form-control'
                                     invalid
+                                    required
                                     validation='Please provide some description'
                                 />
                             </div>

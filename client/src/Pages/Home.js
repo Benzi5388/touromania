@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MDBCol, MDBContainer, MDBRow, MDBPagination, MDBPaginationItem, MDBPaginationLink } from 'mdb-react-ui-kit';
 import { useDispatch, useSelector } from 'react-redux';
-
-
 import { useNavigate } from 'react-router-dom';
 import { setTours } from '../Redux/Features/tourSlice';
 import CardTour from '../Components/CardTour';
@@ -12,6 +10,7 @@ import '../App.css';
 import Lottie from "lottie-react";
 import plane from '../Assets/plane.json'
 import API from '../Axios/Api'
+import Footer from '../Components/Footer'
 
 function Home() {
   const navigate = useNavigate();
@@ -27,7 +26,9 @@ function Home() {
   useEffect(() => {
     const fetchTourData = async () => {
       try {
-        const response = await API.get(`/tour/?page=${currentPage}&sort=${sortOption}`);
+        console.log("Sort Option:", sortOption);
+        const response = await API.get(`/tour/?sort=${sortOption}&page=${currentPage}`);
+        console.log('API Response:', response.data); 
         dispatch(setTours(response.data.tours));
         setTotalPages(response.data.totalPages);
         console.log(response.data.tours);
@@ -40,6 +41,11 @@ function Home() {
     fetchTourData();
   }, [currentPage, sortOption, dispatch, user]);
 
+  useEffect(() => {
+    if (user?.login===true) {
+      navigate('/');
+    }
+  }, [ navigate]);
   
 
   if (isLoading || loading) {
@@ -85,7 +91,7 @@ function Home() {
             <>
               <MDBCol >
                 <MDBContainer>
-                  {/* <div className='sort-dropdown'>
+                  <div className='sort-dropdown'>
                     <label>Sort:</label>
                     <select
                       className='form-select form-select-sm'
@@ -96,9 +102,9 @@ function Home() {
                       <option value='recent' className="option_value">Date</option>
                       <option value='likes' className="option_value">Likes</option>
                     </select>
-                  </div> */}
+                  </div>
                   <MDBRow className='row-cols-1 row-cols-md-3 row-cols-lg-4 g-2'>
-                    {tours && tours.map((item, index) => <CardTour key={index} {...item} sortOption={sortOption} />)}
+                    {tours && tours.map((item, index) => <CardTour key={index} {...item} handleSortChange={handleSortChange}/>)}
                   </MDBRow>
                 </MDBContainer>
               </MDBCol>
@@ -135,6 +141,7 @@ function Home() {
           </MDBRow>
         )}
       </div>
+      <Footer/>
     </>
   );
 }

@@ -25,15 +25,14 @@ import Description from './Pages/Description';
 import AdminDashboard from './Pages/AdminDashboard';
 import Chat from './Pages/Chat/Chat';
 import UserAuth from './Components/UserAuth';
-import Footer from './Components/Footer';
 import { setUser } from './Redux/Features/adminSlice';
 import { useLocation } from 'react-router-dom';
 import API from './Axios/Api'
+import PageNotFound from './Pages/PageNotFound'
 
 
 
 function App() {
-  console.log(API, "appppppppppp");
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
   const email = JSON.parse(localStorage.getItem('email'));
@@ -51,7 +50,7 @@ function App() {
      
       const exemptedRoutes = [ '/register', '/forgotPassword', '/resetPassword', '/otp','/verifyOTP','/resendOTP'];
       if (exemptedRoutes.includes(location.pathname)) {
-        return; // Skip the login check for these routes
+        return;
       }
       if (data.loggedIn && data.userData) {
         dispatch(saveUserData({ ...data.userData, id: data.userData._id, login: true }))
@@ -65,24 +64,12 @@ function App() {
       } else {
         dispatch(setUser({ user: { login: false } }))
       }
-      // if(!data.loggedIn){
-      //   navigate("/login")
-      // }else{
-      //   if(data.userData ){
-      //     dispatch(saveUserData({...data.userData, id:data.userData._id}))
-      //   }
-      // }
     }catch(err){
       console.log(err)
     }
     })()
 
   }, [dispatch,navigate, location, refresh]);
-
-  // useEffect(()=>{
-  //   if(user)
-  //   dispatch(setUser({user:user}))
-  // },[])
 
   useEffect(() => {
 
@@ -118,23 +105,7 @@ function App() {
         <Route path='/callback' element={<UserAuth />} />
         <Route path='/adminLogin' element={<AdminLogin />} />
         <Route path='/AdminDashboard' element={<AdminDashboard />} />
-
-        {
-        //   admin?.user?.login &&
-        //   <>
-        //     <Route path='/adminLogin' element={<Navigate to="/AdminDashboard" />} />
-        //     {/* <Route path='/AdminDashboard' element={<AdminDashboard />} /> */}
-            
-        //   </>
-        // }
-        // {
-        //   admin?.user?.login === false &&
-        //   <>
-        //     <Route path='/adminLogin' element={<AdminLogin />} />
-        //     {/* <Route path='/AdminDashboard' element={<Navigate to="/adminLogin" />} /> */}
-            
-        //   </>
-        }
+        <Route path='*' element={<PageNotFound />} />
       </Routes>
     </div>
   )

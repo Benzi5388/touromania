@@ -27,7 +27,7 @@ function Login() {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      if (email && password) {
+      if (email && password ) {
         try {
           const response = await API.post('/users/signin', { formValue });
           if (response.data.token) {
@@ -54,7 +54,7 @@ function Login() {
 
 
   useEffect(() => {
-    if (user.login) {
+    if (user?.login) {
       navigate('/'); // Navigate to the home route
     }
   }, [ user]);
