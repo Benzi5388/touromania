@@ -29,6 +29,7 @@ export const createChat = async (req, res) => {
   
 
 export const userChats = async(req, res)=>{
+   console.log("user chats constroller")
     try{
       const chat = await ChatModel.find({
         members : {$in : [req.params.userId]}
