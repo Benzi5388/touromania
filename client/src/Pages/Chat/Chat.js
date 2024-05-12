@@ -34,7 +34,6 @@ const Chat = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    //  console.log("HELLOOOOO "+onlineUsers, currentChat, sendMessage, receivedMessage);
   }, [onlineUsers, sendMessage, receivedMessage])
 
   // useEffect(() => {
@@ -70,7 +69,7 @@ const Chat = () => {
 
   const handleSearch = async (searchQuery) => {
     try {
-      const response = await axios.get(`https://touromania.unitedwestand.online/chat/?search=${searchQuery}`);
+      const response = await axios.get(`http://localhost:5000/chat/?search=${searchQuery}`);
       const users = response.data.users;
 
       const buttons = users.map((user, index) => {
@@ -112,7 +111,7 @@ const Chat = () => {
             receiverId: selectedUser._id,
           };
 
-          axios.post('https://touromania.unitedwestand.online/chat/', chatData)
+          axios.post('http://localhost:5000/chat/', chatData)
             .then((response) => {
               // Chat created successfully
               console.log('Chat created:', response.data);
@@ -164,7 +163,7 @@ const Chat = () => {
 
   // Connect to Socket.io
   useEffect(() => {
-    socket.current = io("https://touromania.unitedwestand.online");
+    socket.current = io("http://localhost:5000");
     socket.current.emit("new-user-add", user.id);
     console.log(user.id, "userid");
     socket.current.on("get-users", (users) => {
